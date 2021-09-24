@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -60,5 +61,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function changeEmailRequests()
     {
         return $this->hasMany(ChangeEmailRequest::class);
+    }
+
+    public function getLockingKey()
+    {
+        return "{$this->id}-lock";
+    }
+
+    public function incrementLock()
+    {
+        $key = $this->getLockingKey();
+        Cache::set($key, ((int)Cache::get($key, 0)) + 1, config('auth.blocking.seconds') + (config('auth.blocking.minutes') * 60));
+    }
+
+    public function resetLock()
+    {
+        Cache::delete($this->getLockingKey());
     }
 }

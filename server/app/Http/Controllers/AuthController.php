@@ -8,10 +8,11 @@ use App\Http\Requests\ResendVerificationMailRequest;
 use App\Http\Requests\SendForgotPasswordMailRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Notifications\RegisteredNotification;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -25,15 +26,42 @@ class AuthController extends Controller
 
         $user = User::whereEmail($data['email'])->firstOrFail();
 
+        if ($user->blocked_until !== null) {
+            $date = Carbon::parse($user->blocked_until);
+            if ($date->isFuture()) {
+                return response(['message' => 'Account is locked.'], 403);
+            }
+        }
+
+        if (Cache::get($user->getLockingKey(), 0) >= config('auth.blocking.retries')) {
+            $minutes = config('auth.blocking.minutes');
+            $seconds = config('auth.blocking.seconds');
+
+            $user->blocked_until = now()
+                ->addSeconds($minutes)
+                ->addMinutes($seconds);
+
+            $user->save();
+
+            return response(['message' => "Account is locked for $minutes minutes and $seconds seconds."], 429);
+        }
+
         if (!Hash::check($data['password'], $user->password)) {
-            return response(['message' => 'Password is incorrect.'], 401);
+            $user->incrementLock();
+            return response(['message' => 'Password is incorrect.', 'locks' => Cache::get($user->getLockingKey(), 0)], 401);
         }
 
         if (!$user->email_verified_at) {
+            $user->incrementLock();
             return response(['message' => 'Email is not verified.'], 401);
         }
 
         $token = $user->createToken(Str::random());
+
+        $user->blocked_until = null;
+        $user->resetLock();
+
+        $user->save();
 
         return [
             'token' => $token->plainTextToken,

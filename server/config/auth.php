@@ -96,6 +96,7 @@ return [
     ],
 
     'blocking' => [
+        'retries' => env('AUTH_BLOCK_RETRIES', 5),
         'seconds' => env('AUTH_BLOCK_SECONDS', 0),
         'minutes' => env('AUTH_BLOCK_MINUTES', 0),
     ],
