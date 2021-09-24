@@ -1,0 +1,17 @@
+.sidebar-collapse .sidebar-link-text {
+	display: none;
+}
+
+@media screen and (max-width: 640px) {
+	.sidebar-mobile-open {
+		display: block !important;
+	}
+
+	.sidebar-mobile-open:not(.sidebar-collapse) {
+		width: 60vw !important;
+	}
+
+	.sidebar-mobile-open:not(.sidebar-collapse) .sidebar {
+		width: 60vw !important;
+	}
+}
