@@ -43,6 +43,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'status' => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function (self $user) {
+            $user->changeEmailRequests->each->delete();
+        });
+    }
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = Hash::make($password);
@@ -77,5 +84,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function resetLock()
     {
         Cache::delete($this->getLockingKey());
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === static::ADMIN;
     }
 }
