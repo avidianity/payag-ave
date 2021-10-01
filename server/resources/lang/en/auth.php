@@ -19,4 +19,5 @@ return [
     'locked' => 'Account is locked.',
     'locked_time' => 'Account is locked for :minutes minutes and :seconds seconds.',
     'unverifed' => 'Email is not verified.',
+    'inactive' => 'Account is not active.',
 ];

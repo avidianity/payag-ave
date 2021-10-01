@@ -15,30 +15,22 @@ class EmailVerificationRequest extends FormRequest
     public function authorize()
     {
         if ($this->has('request_id')) {
-            $changeEmailRequest = ChangeEmailRequest::findOrFail($this->input('request_id'));
+            $changeEmailRequest = ChangeEmailRequest::with('user')->findOrFail($this->input('request_id'));
 
             if (!hash_equals(
                 (string) $this->route('hash'),
                 sha1($changeEmailRequest->email)
-            ) && $this->user()->getKey() === $changeEmailRequest->user->getKey()) {
+            )) {
                 return false;
-            } else {
-                return true;
             }
+
+            if ($this->user()->getKey() !== $changeEmailRequest->user->getKey()) {
+                return false;
+            }
+
+            return true;
         }
 
         return parent::authorize();
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
-    {
-        return [
-            //
-        ];
     }
 }

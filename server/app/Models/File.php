@@ -34,8 +34,9 @@ class File extends Model
 
     /**
      * Process a file dynamically.
-     * @param string|Illuminate\Http\UploadedFile $file
-     * @param User|null $user
+     *
+     * @param string|\Illuminate\Http\UploadedFile $file
+     * @return \App\Models\File
      */
     public static function process($file)
     {
@@ -53,8 +54,8 @@ class File extends Model
     /**
      * Process an uploaded file for saving to the database.
      *
-     * @param Illuminate\Http\UploadedFile $file
-     * @return \App\Models\File $user
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return \App\Models\File
      */
     public static function processFile($file)
     {
@@ -70,7 +71,7 @@ class File extends Model
      * Process a file url for saving to the database.
      *
      * @param string $url
-     * @return \App\Models\File|
+     * @return \App\Models\File
      */
     public static function processURL($url)
     {
@@ -79,7 +80,7 @@ class File extends Model
         $binary = @file_get_contents($url);
 
         if ($binary === false) {
-            if (base64_encode(base64_decode($url, true)) !== $url) {
+            if (!isBase64($binary)) {
                 throw new InvalidArgumentException(
                     'File must be either a string url, base64 encoded file or an instance of Illuminate\Http\UploadedFile'
                 );
@@ -114,6 +115,7 @@ class File extends Model
 
     /**
      * Change a mime type to a file extension.
+     *
      * @param string $mime
      * @return string $extension
      */

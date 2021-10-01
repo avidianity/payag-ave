@@ -4,12 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Notifications\VerifyEmail;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -197,5 +200,37 @@ class AuthTest extends TestCase
                 'status' => __(Password::PASSWORD_RESET),
             ])
             ->assertOk();
+    }
+
+    /**
+     * @test
+     */
+    public function it_verifies_a_user_email()
+    {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()
+            ->unverified()
+            ->create();
+
+        Event::fake();
+
+        $route =  URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(config('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+                'token' => $user->createToken(Str::random(10))->plainTextToken,
+            ]
+        );
+
+        $this->get($route)
+            ->assertRedirect(frontend('/email-verified'));
+
+        Event::assertDispatched(Verified::class);
+
+        $this->assertTrue($user->fresh()->hasVerifiedEmail());
     }
 }

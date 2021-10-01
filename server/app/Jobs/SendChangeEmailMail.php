@@ -79,7 +79,7 @@ class SendChangeEmailMail implements ShouldQueue, ShouldBeUnique
             ->line(Lang::get('You have changed your email address.'))
             ->line(Lang::get('Please click the button below to verify your email address.'))
             ->action(Lang::get('Verify Email Address'), $url)
-            ->line(Lang::get('If you did not create an account, no further action is required.'));
+            ->line(Lang::get('If you did not change your email, no further action is required.'));
     }
 
     protected function makeSignedUrl()

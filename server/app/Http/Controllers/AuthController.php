@@ -51,6 +51,10 @@ class AuthController extends Controller
             ])], 429);
         }
 
+        if (!$user->status) {
+            return response(['message' => __('auth.inactive')], 401);
+        }
+
         if (!Hash::check($data['password'], $user->password)) {
             $user->incrementLock();
             return response(['message' => __('auth.password')], 401);
