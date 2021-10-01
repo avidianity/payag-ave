@@ -22,7 +22,10 @@ class FileFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'size' => 0,
+            'name' => $this->faker->name,
+            'type' => 'image/png',
+            'url' => $this->faker->imageUrl,
         ];
     }
 }

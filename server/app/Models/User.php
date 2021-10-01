@@ -55,11 +55,6 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->attributes['password'] = Hash::make($password);
     }
 
-    /**
-     * Send the email verification notification.
-     *
-     * @return void
-     */
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifyEmail($this));
@@ -89,5 +84,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin()
     {
         return $this->role === static::ADMIN;
+    }
+
+    public function isCustomer()
+    {
+        return $this->role === static::CUSTOMER;
+    }
+
+    public function isEmployee()
+    {
+        return $this->role === static::EMPLOYEE;
     }
 }

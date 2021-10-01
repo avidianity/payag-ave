@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-class {{ class }} extends BaseJsonResource
+class {{ class }} extends JsonResource
 {
     /**
      * Transform the resource into an array.

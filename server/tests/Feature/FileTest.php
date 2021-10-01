@@ -33,7 +33,7 @@ class FileTest extends TestCase
     /**
      * @test
      */
-    public function is_should_delete_a_file()
+    public function it_should_delete_a_file()
     {
         /**
          * @var \App\Models\User
@@ -51,5 +51,15 @@ class FileTest extends TestCase
 
         $this->delete(route('v1.files.destroy', ['file' => $file->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_a_collection_of_files()
+    {
+        $this->get(route('v1.files.index'), ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonStructure(['data']);
     }
 }

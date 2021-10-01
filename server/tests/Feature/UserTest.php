@@ -24,8 +24,6 @@ class UserTest extends TestCase
 
         $this->actingAs($user, 'sanctum');
 
-        User::factory(1)->create();
-
         $this->get(route('v1.users.index'), ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJsonStructure(['data']);
@@ -34,7 +32,7 @@ class UserTest extends TestCase
     /**
      * @test
      */
-    public function it_should_return_one_user()
+    public function it_should_return_a_user()
     {
         /**
          * @var \App\Models\User

@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+class StoreCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->isAdmin();
+        return !$this->user()->isCustomer();
     }
 
     /**
@@ -26,14 +26,8 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['nullable', 'string'],
-            'email' => [
-                'nullable',
-                'email',
-                Rule::unique(User::class)->ignoreModel($this->route('user'))
-            ],
-            'password' => ['nullable', 'string'],
-            'phone' => ['nullable', 'digits:11'],
+            'code' => ['required', 'string', Rule::unique(Category::class)],
+            'name' => ['required', 'string', 'max:255'],
         ];
     }
 }

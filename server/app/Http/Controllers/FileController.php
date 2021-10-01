@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FileResource;
 use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return FileResource::collection(File::all());
+    }
+
     /**
      * Display the specified resource.
      *

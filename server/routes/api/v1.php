@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +30,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::apiResource('users', UserController::class);
         Route::apiResource('files', FileController::class)->only('destroy');
     });
+
+    Route::group(['middleware' => 'non-customer'], function () {
+        Route::apiResource('categories', CategoryController::class)->except('index', 'show');
+        Route::apiResource('products', ProductController::class)->except('index', 'show');
+    });
 });
 
-Route::apiResource('files', FileController::class)->only('show');
+Route::apiResource('files', FileController::class)->only('index', 'show');
+Route::apiResource('categories', CategoryController::class)->only('index', 'show');
+Route::apiResource('products', ProductController::class)->only('index', 'show');
