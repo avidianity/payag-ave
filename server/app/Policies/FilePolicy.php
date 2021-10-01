@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\ChangeEmailRequest;
+use App\Models\File;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ChangeEmailRequestPolicy
+class FilePolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class ChangeEmailRequestPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ChangeEmailRequest  $changeEmailRequest
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, ChangeEmailRequest $changeEmailRequest)
+    public function view(User $user, File $file)
     {
         //
     }
@@ -48,10 +48,10 @@ class ChangeEmailRequestPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ChangeEmailRequest  $changeEmailRequest
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, ChangeEmailRequest $changeEmailRequest)
+    public function update(User $user, File $file)
     {
         //
     }
@@ -60,10 +60,10 @@ class ChangeEmailRequestPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ChangeEmailRequest  $changeEmailRequest
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, ChangeEmailRequest $changeEmailRequest)
+    public function delete(User $user, File $file)
     {
         //
     }
@@ -72,10 +72,10 @@ class ChangeEmailRequestPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ChangeEmailRequest  $changeEmailRequest
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, ChangeEmailRequest $changeEmailRequest)
+    public function restore(User $user, File $file)
     {
         //
     }
@@ -84,10 +84,10 @@ class ChangeEmailRequestPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ChangeEmailRequest  $changeEmailRequest
+     * @param  \App\Models\File  $file
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, ChangeEmailRequest $changeEmailRequest)
+    public function forceDelete(User $user, File $file)
     {
         //
     }

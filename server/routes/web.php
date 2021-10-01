@@ -38,15 +38,3 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
     return redirect(config('urls.frontend') . '/email-verified');
 })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
-
-Route::get('/login', function () {
-    return redirect(config('urls.frontend') . '/login');
-})->name('login');
-
-Route::get('/forgot-password', function () {
-    return redirect(config('urls.frontend') . '/forgot-password');
-})->name('password.request');
-
-Route::get('/reset-password/{token}', function ($token) {
-    return redirect(config('urls.frontend') . sprintf('/reset-password/%s', $token));
-})->name('password.reset');

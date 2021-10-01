@@ -3,8 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Notifications\VerifyEmail;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -20,11 +26,10 @@ class AuthTest extends TestCase
 
         User::factory()->create($data);
 
-        $response = $this->post(route('auth.login', $data), ['Accept' => 'application/json']);
-
-        $response->assertOk()->assertJsonStructure([
-            'token', 'user'
-        ]);
+        $this->post(route('v1.auth.login', $data), ['Accept' => 'application/json'])->assertOk()
+            ->assertJsonStructure([
+                'token', 'user'
+            ]);
     }
 
     /**
@@ -41,12 +46,11 @@ class AuthTest extends TestCase
         $data['password'] = 'something else';
 
         for ($x = 0; $x < config('auth.blocking.retries'); $x++) {
-            $this->post(route('auth.login', $data), ['Accept' => 'application/json']);
+            $this->post(route('v1.auth.login', $data), ['Accept' => 'application/json']);
         }
 
-        $response = $this->post(route('auth.login', $data), ['Accept' => 'application/json']);
-
-        $response->assertStatus(429);
+        $this->post(route('v1.auth.login', $data), ['Accept' => 'application/json'])
+            ->assertStatus(429);
     }
 
     /**
@@ -67,9 +71,8 @@ class AuthTest extends TestCase
 
         $user->save();
 
-        $response = $this->post(route('auth.login', $data), ['Accept' => 'application/json']);
-
-        $response->assertStatus(403);
+        $this->post(route('v1.auth.login', $data), ['Accept' => 'application/json'])
+            ->assertStatus(403);
     }
 
     /**
@@ -92,11 +95,11 @@ class AuthTest extends TestCase
 
         $this->travel(1)->hours();
 
-        $response = $this->post(route('auth.login', $data), ['Accept' => 'application/json']);
-
-        $response->assertOk()->assertJsonStructure([
-            'token', 'user'
-        ]);
+        $this->post(route('v1.auth.login', $data), ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonStructure([
+                'token', 'user'
+            ]);
     }
 
     /**
@@ -111,8 +114,88 @@ class AuthTest extends TestCase
             'password' => $this->faker->password,
         ];
 
-        $response = $this->post(route('auth.register', $data), ['Accept' => 'application/json']);
+        Notification::fake();
 
-        $response->assertNoContent();
+        $this->post(route('v1.auth.register', $data), ['Accept' => 'application/json'])
+            ->assertNoContent();
+
+        Notification::assertSentTo(User::firstOrFail(), VerifyEmail::class);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_send_a_password_reset_email()
+    {
+        $user = User::factory()->create();
+
+        Notification::fake();
+
+        $this->post(
+            route('v1.auth.password.email'),
+            ['email' => $user->email],
+            [
+                'Accept' => 'application/json',
+            ]
+        )
+            ->assertJson([
+                'status' => __(Password::RESET_LINK_SENT)
+            ])
+            ->assertOk();
+
+        Notification::assertSentTo($user, ResetPassword::class);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_reset_password()
+    {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $config = config('auth.passwords.users');
+
+        $key = config('app.key');
+
+        if (Str::startsWith($key, 'base64:')) {
+            $key = base64_decode(substr($key, 7));
+        }
+
+        $connection = $config['connection'] ?? null;
+
+        $tokens = new DatabaseTokenRepository(
+            $this->app['db']->connection($connection),
+            $this->app['hash'],
+            $config['table'],
+            $key,
+            $config['expire'],
+            $config['throttle'] ?? 0
+        );
+
+        $token = $tokens->create($user);
+
+        $user->sendPasswordResetNotification($token);
+
+        $password = $this->faker->password;
+
+        $this->post(
+            route('v1.auth.password.update'),
+            [
+                'token' => $token,
+                'email' => $user->email,
+                'password' => $password,
+                'password_confirmation' => $password,
+            ],
+            [
+                'Accept' => 'application/json',
+            ]
+        )
+            ->assertJson([
+                'status' => __(Password::PASSWORD_RESET),
+            ])
+            ->assertOk();
     }
 }

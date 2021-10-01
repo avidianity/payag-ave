@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,5 +26,8 @@ Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['middleware' => 'admin'], function () {
         Route::apiResource('users', UserController::class);
+        Route::apiResource('files', FileController::class)->only('destroy');
     });
 });
+
+Route::apiResource('files', FileController::class)->only('show');

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class UserFactory extends Factory
@@ -28,7 +29,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'status' => true,
-            'role' => User::ROLES[rand(0, count(User::ROLES) - 1)],
+            'role' => Arr::random(User::ROLES),
             'phone' => $this->faker->numberBetween(11111111111, 99999999999),
         ];
     }

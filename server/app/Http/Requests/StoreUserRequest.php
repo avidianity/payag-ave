@@ -30,6 +30,8 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'email', Rule::unique(User::class)],
             'password' => ['required', 'string'],
             'phone' => ['required', 'digits:11'],
+            'role' => ['required', 'string', Rule::in(User::ROLES)],
+            'status' => ['required', 'boolean'],
         ];
     }
 }

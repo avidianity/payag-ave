@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\PasswordResetRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResendVerificationMailRequest;
 use App\Http\Requests\SendForgotPasswordMailRequest;
@@ -29,7 +30,7 @@ class AuthController extends Controller
         if ($user->blocked_until !== null) {
             $date = Carbon::parse($user->blocked_until);
             if ($date->isFuture()) {
-                return response(['message' => 'Account is locked.'], 403);
+                return response(['message' => __('auth.locked')], 403);
             }
         }
 
@@ -41,19 +42,23 @@ class AuthController extends Controller
                 ->addSeconds($minutes)
                 ->addMinutes($seconds);
 
+            $user->resetLock();
             $user->save();
 
-            return response(['message' => "Account is locked for $minutes minutes and $seconds seconds."], 429);
+            return response(['message' => __('auth.locked_time', [
+                'minutes' => $minutes,
+                'seconds' => $seconds,
+            ])], 429);
         }
 
         if (!Hash::check($data['password'], $user->password)) {
             $user->incrementLock();
-            return response(['message' => 'Password is incorrect.', 'locks' => Cache::get($user->getLockingKey(), 0)], 401);
+            return response(['message' => __('auth.password')], 401);
         }
 
         if (!$user->email_verified_at) {
             $user->incrementLock();
-            return response(['message' => 'Email is not verified.'], 401);
+            return response(['message' => __('auth.unverified')], 401);
         }
 
         $token = $user->createToken(Str::random());
@@ -91,7 +96,7 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->firstOrFail();
 
         if (!Hash::check($data['password'], $user->password)) {
-            return response(['message' => 'Password is incorrect.'], 403);
+            return response(['message' => __('auth.password')], 403);
         }
 
         $user->sendEmailVerificationNotification();
@@ -108,7 +113,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        $status = Password::sendResetLink($data['email']);
+        $status = Password::sendResetLink($data);
 
         if ($status !== Password::RESET_LINK_SENT) {
             return response(['errors' => [
@@ -119,17 +124,11 @@ class AuthController extends Controller
         return response(['status' => __($status)]);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(PasswordResetRequest $request)
     {
-        $request->validate([
-            'token' => ['required', 'string'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string', 'confirmed'],
-        ]);
-
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
+            function (User $user, string $password) {
                 $user->forceFill([
                     'password' => $password,
                 ])->save();
