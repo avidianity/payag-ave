@@ -1,0 +1,323 @@
+[
+	{
+		"domain": null,
+		"method": "GET|POST|HEAD",
+		"uri": "broadcasting/auth",
+		"name": null,
+		"action": "Illuminate\\Broadcasting\\BroadcastController@authenticate",
+		"middleware": "web"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "email/verify/{id}/{hash}",
+		"name": "verification.verify",
+		"action": "Closure",
+		"middleware": "web\nApp\\Http\\Middleware\\Authenticate:sanctum\nIlluminate\\Routing\\Middleware\\ValidateSignature"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "forgot-password",
+		"name": "password.request",
+		"action": "Closure",
+		"middleware": "web"
+	},
+	{ "domain": null, "method": "GET|HEAD", "uri": "login", "name": "login", "action": "Closure", "middleware": "web" },
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "reset-password/{token}",
+		"name": "password.reset",
+		"action": "Closure",
+		"middleware": "web"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "sanctum/csrf-cookie",
+		"name": null,
+		"action": "Laravel\\Sanctum\\Http\\Controllers\\CsrfCookieController@show",
+		"middleware": "web"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "service-unavailable",
+		"name": "maintenance-mode",
+		"action": "Closure",
+		"middleware": "web"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/auth/forgot-password",
+		"name": "v1.auth.password.email",
+		"action": "App\\Http\\Controllers\\AuthController@sendForgotPasswordEmail",
+		"middleware": "api"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/auth/login",
+		"name": "v1.auth.login",
+		"action": "App\\Http\\Controllers\\AuthController@login",
+		"middleware": "api"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/auth/register",
+		"name": "v1.auth.register",
+		"action": "App\\Http\\Controllers\\AuthController@register",
+		"middleware": "api"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/auth/reset-password",
+		"name": "v1.auth.password.update",
+		"action": "App\\Http\\Controllers\\AuthController@resetPassword",
+		"middleware": "api"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/categories",
+		"name": "v1.categories.store",
+		"action": "App\\Http\\Controllers\\CategoryController@store",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/categories",
+		"name": "v1.categories.index",
+		"action": "App\\Http\\Controllers\\CategoryController@index",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "PUT|PATCH",
+		"uri": "v1/categories/{category}",
+		"name": "v1.categories.update",
+		"action": "App\\Http\\Controllers\\CategoryController@update",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "DELETE",
+		"uri": "v1/categories/{category}",
+		"name": "v1.categories.destroy",
+		"action": "App\\Http\\Controllers\\CategoryController@destroy",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/categories/{category}",
+		"name": "v1.categories.show",
+		"action": "App\\Http\\Controllers\\CategoryController@show",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/categories/{category}/products",
+		"name": "v1.categories.products.index",
+		"action": "App\\Http\\Controllers\\CategoryProductController@index",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/categories/{category}/products/{product}",
+		"name": "v1.categories.products.show",
+		"action": "App\\Http\\Controllers\\CategoryProductController@show",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/files",
+		"name": "v1.files.index",
+		"action": "App\\Http\\Controllers\\FileController@index",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "DELETE",
+		"uri": "v1/files/{file}",
+		"name": "v1.files.destroy",
+		"action": "App\\Http\\Controllers\\FileController@destroy",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\AdminMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/files/{file}",
+		"name": "v1.files.show",
+		"action": "App\\Http\\Controllers\\FileController@show",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/orders",
+		"name": "v1.orders.index",
+		"action": "App\\Http\\Controllers\\OrderController@index",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/orders",
+		"name": "v1.orders.store",
+		"action": "App\\Http\\Controllers\\OrderController@store",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/orders/{order}",
+		"name": "v1.orders.show",
+		"action": "App\\Http\\Controllers\\OrderController@show",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "PUT|PATCH",
+		"uri": "v1/orders/{order}",
+		"name": "v1.orders.update",
+		"action": "App\\Http\\Controllers\\OrderController@update",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "DELETE",
+		"uri": "v1/orders/{order}",
+		"name": "v1.orders.destroy",
+		"action": "App\\Http\\Controllers\\OrderController@destroy",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/products",
+		"name": "v1.products.store",
+		"action": "App\\Http\\Controllers\\ProductController@store",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/products",
+		"name": "v1.products.index",
+		"action": "App\\Http\\Controllers\\ProductController@index",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "PUT|PATCH",
+		"uri": "v1/products/{product}",
+		"name": "v1.products.update",
+		"action": "App\\Http\\Controllers\\ProductController@update",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "DELETE",
+		"uri": "v1/products/{product}",
+		"name": "v1.products.destroy",
+		"action": "App\\Http\\Controllers\\ProductController@destroy",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\NonCustomerMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/products/{product}",
+		"name": "v1.products.show",
+		"action": "App\\Http\\Controllers\\ProductController@show",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/self/orders",
+		"name": "v1.self.orders.index",
+		"action": "App\\Http\\Controllers\\SelfOrderController@index",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/self/orders",
+		"name": "v1.self.orders.store",
+		"action": "App\\Http\\Controllers\\SelfOrderController@store",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/self/orders/{order}",
+		"name": "v1.self.orders.show",
+		"action": "App\\Http\\Controllers\\SelfOrderController@show",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "PUT|PATCH",
+		"uri": "v1/self/orders/{order}",
+		"name": "v1.self.orders.update",
+		"action": "App\\Http\\Controllers\\SelfOrderController@update",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "DELETE",
+		"uri": "v1/self/orders/{order}",
+		"name": "v1.self.orders.destroy",
+		"action": "App\\Http\\Controllers\\SelfOrderController@destroy",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/users",
+		"name": "v1.users.index",
+		"action": "App\\Http\\Controllers\\UserController@index",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\AdminMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "POST",
+		"uri": "v1/users",
+		"name": "v1.users.store",
+		"action": "App\\Http\\Controllers\\UserController@store",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\AdminMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "GET|HEAD",
+		"uri": "v1/users/{user}",
+		"name": "v1.users.show",
+		"action": "App\\Http\\Controllers\\UserController@show",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\AdminMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "PUT|PATCH",
+		"uri": "v1/users/{user}",
+		"name": "v1.users.update",
+		"action": "App\\Http\\Controllers\\UserController@update",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\AdminMiddleware"
+	},
+	{
+		"domain": null,
+		"method": "DELETE",
+		"uri": "v1/users/{user}",
+		"name": "v1.users.destroy",
+		"action": "App\\Http\\Controllers\\UserController@destroy",
+		"middleware": "api\nApp\\Http\\Middleware\\Authenticate:sanctum\nApp\\Http\\Middleware\\AdminMiddleware"
+	}
+]

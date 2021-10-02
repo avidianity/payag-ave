@@ -14,6 +14,6 @@ class FileSeeder extends Seeder
      */
     public function run()
     {
-        File::factory(10)->create();
+        File::factory()->count(10)->create();
     }
 }

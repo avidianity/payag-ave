@@ -8,6 +8,7 @@ import '@fontsource/material-icons';
 import 'line-awesome/dist/font-awesome-line-awesome/css/all.css';
 import './styles/scrollbar.css';
 import './styles/modal-image.css';
+import './styles/toastr.css';
 
 ReactDOM.render(
 	<React.StrictMode>

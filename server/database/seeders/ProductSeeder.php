@@ -16,8 +16,9 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        $categories = Category::all()->map->id->toArray();
-
-        Product::factory(100)->create(['category_id' => Arr::random($categories)]);
+        Product::factory()
+            ->count(100)
+            ->forCategory()
+            ->create();
     }
 }

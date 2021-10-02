@@ -14,18 +14,41 @@ import { useToggle } from '@avidian/hooks';
 import { UserInterface } from '../interfaces/user.interface';
 import { useHistory } from 'react-router';
 import Spinner from '../components/Spinner';
+import axios from 'axios';
+import { handleError } from '../helpers';
+import { LoginResponse } from '../responses/login.response';
+import { useGlobalState } from '../hooks';
 
 type Props = {};
 
-type Inputs = Pick<UserInterface, 'id'>;
+type Inputs = Pick<UserInterface, 'email' | 'password'> & {
+	remember_me: boolean;
+};
 
 const Login: FC<Props> = (props) => {
 	const [processing, setProcessing] = useToggle(false);
 	const { register, handleSubmit, reset } = useForm<Inputs>();
 	const history = useHistory();
+	const state = useGlobalState();
 
-	const submit = async (data: Inputs) => {
-		history.push(routes.DASHBOARD);
+	const submit = async (payload: Inputs) => {
+		setProcessing(true);
+		try {
+			const {
+				data: { user, token },
+			} = await axios.post<LoginResponse>('/v1/auth/login', payload);
+
+			if (payload.remember_me) {
+				state.set('token', token);
+			}
+
+			reset();
+			history.push(routes.DASHBOARD);
+		} catch (error: any) {
+			handleError(error);
+		} finally {
+			setProcessing(false);
+		}
 	};
 
 	return (
@@ -34,9 +57,9 @@ const Login: FC<Props> = (props) => {
 				<Header title='Sign In' description='Login to stay connected.' picture={logo} />
 				<Body>
 					<form onSubmit={handleSubmit(submit)}>
-						<Input type='email' id='email' name='email' placeholder='Email' disabled={processing} />
-						<Input type='password' id='password' name='password' placeholder='Password' disabled={processing} />
-						<Checkbox label='Remember Me' />
+						<Input {...register('email')} type='email' id='email' placeholder='Email' disabled={processing} />
+						<Input {...register('password')} type='password' id='password' placeholder='Password' disabled={processing} />
+						<Checkbox {...register('remember_me')} label='Remember Me' />
 						<Button type='submit' buttonSize='sm' className='mt-4' disabled={processing}>
 							{processing ? <Spinner className='mr-2' /> : null}
 							Sign In

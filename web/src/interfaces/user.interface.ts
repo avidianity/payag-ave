@@ -1,3 +1,6 @@
 import { ModelInterface } from './model.interface';
 
-export interface UserInterface extends ModelInterface {}
+export interface UserInterface extends ModelInterface {
+	email: string;
+	password: string;
+}

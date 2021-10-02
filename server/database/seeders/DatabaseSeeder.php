@@ -16,5 +16,9 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         User::factory()->create(['email' => 'admin@gmail.com', 'password' => Hash::make('admin'), 'role' => User::ADMIN]);
+        $this->call(UserSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(ProductSeeder::class);
+        $this->call(OrderSeeder::class);
     }
 }

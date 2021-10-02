@@ -4,6 +4,7 @@ import State from '@avidian/state';
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
 axios.defaults.headers.common['Accept'] = 'application/json';
+axios.defaults.withCredentials = true;
 
 const state = State.getInstance();
 
