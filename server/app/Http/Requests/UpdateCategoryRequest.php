@@ -29,7 +29,7 @@ class UpdateCategoryRequest extends FormRequest
             'code' => [
                 'nullable',
                 'string',
-                Rule::unique(Category::class)->ignoreModel($this->route('category'))
+                Rule::unique(Category::class)->ignoreModel($this->routeModel('category', Category::class))
             ],
             'name' => ['nullable', 'string', 'max:255'],
         ];

@@ -2,13 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Order;
 use App\Models\Product;
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateOrderRequest extends FormRequest
+class StoreSelfOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,20 +15,6 @@ class UpdateOrderRequest extends FormRequest
      */
     public function authorize()
     {
-        /**
-         * @var \App\Models\Order
-         */
-        $order = $this->routeModel('order', Order::class);
-
-        /**
-         * @var \App\Models\User
-         */
-        $user = $this->user();
-
-        if ($order->status === Order::PAID && $user->isCustomer()) {
-            return false;
-        }
-
         return true;
     }
 
@@ -42,9 +26,6 @@ class UpdateOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'customer_id' => ['nullable', 'numeric', Rule::exists(User::class, 'id')],
-            'paid' => ['nullable', 'numeric'],
-            'status' => ['nullable', 'string', Rule::in(Order::STATUSES)],
             'products' => ['required', 'array', 'min:1'],
             'products.*.id' => ['required', 'numeric', Rule::exists(Product::class, 'id')],
         ];

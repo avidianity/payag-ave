@@ -20,7 +20,9 @@ class CreateOrdersTable extends Migration
 
             $table->id();
             $table->foreignIdFor(new User(), 'customer_id')->constrained($userTable);
-            $table->foreignIdFor(new User(), 'biller_id')->constrained($userTable);
+            $table->foreignIdFor(new User(), 'biller_id')
+                ->nullable()
+                ->constrained($userTable);
             $table->unsignedDecimal('paid');
             $table->enum('status', Order::STATUSES);
             $table->timestamps();

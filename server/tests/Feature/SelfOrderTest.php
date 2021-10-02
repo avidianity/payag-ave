@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
 
-class OrderTest extends TestCase
+class SelfOrderTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
@@ -23,11 +23,11 @@ class OrderTest extends TestCase
         /**
          * @var \App\Models\User
          */
-        $user = User::factory()->create(['role' => User::ADMIN]);
+        $user = User::factory()->create();
 
         $this->actingAs($user, 'sanctum');
 
-        $this->get(route('v1.orders.index'), ['Accept' => 'application/json'])
+        $this->get(route('v1.self.orders.index'), ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJsonStructure(['data']);
     }
@@ -37,21 +37,21 @@ class OrderTest extends TestCase
      */
     public function it_should_return_an_order()
     {
+        User::factory()->create(['role' => User::EMPLOYEE]);
+
         /**
          * @var \App\Models\User
          */
-        $user = User::factory()->create(['role' => User::ADMIN]);
+        $user = User::factory()->create();
 
         $this->actingAs($user, 'sanctum');
-
-        User::factory()->create(['role' => User::CUSTOMER]);
 
         /**
          * @var \App\Models\Order
          */
-        $order = Order::factory()->create();
+        $order = Order::factory()->create(['customer_id' => $user->id]);
 
-        $this->get(route('v1.orders.show', ['order' => $order->id]), ['Accept' => 'application/json'])
+        $this->get(route('v1.self.orders.show', ['order' => $order->id]), ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJsonStructure(['data']);
     }
@@ -64,14 +64,9 @@ class OrderTest extends TestCase
         /**
          * @var \App\Models\User
          */
-        $user = User::factory()->create(['role' => User::ADMIN]);
+        $user = User::factory()->create();
 
         $this->actingAs($user, 'sanctum');
-
-        /**
-         * @var \App\Models\User
-         */
-        $customer = User::factory()->create(['role' => User::CUSTOMER]);
 
         /**
          * @var \App\Models\Category
@@ -84,16 +79,12 @@ class OrderTest extends TestCase
         $product = Product::factory()->create(['category_id' => $category->id]);
 
         $data = [
-            'customer_id' => $customer->id,
-            'biller_id' => $user->id,
-            'paid' => $this->faker->numberBetween(1, 1000),
-            'status' => Arr::random(Order::STATUSES),
             'products' => [
                 ['id' => $product->id],
             ],
         ];
 
-        $this->post(route('v1.orders.store'), $data, ['Accept' => 'application/json'])
+        $this->post(route('v1.self.orders.store'), $data, ['Accept' => 'application/json'])
             ->assertCreated()
             ->assertJsonStructure(['data']);
     }
@@ -103,6 +94,8 @@ class OrderTest extends TestCase
      */
     public function it_should_update_an_order()
     {
+        User::factory()->create(['role' => User::EMPLOYEE]);
+
         /**
          * @var \App\Models\User
          */
@@ -111,14 +104,12 @@ class OrderTest extends TestCase
         $this->actingAs($user, 'sanctum');
 
         /**
-         * @var \App\Models\User
-         */
-        $customer = User::factory()->create(['role' => User::CUSTOMER]);
-
-        /**
          * @var \App\Models\Order
          */
-        $order = Order::factory()->create();
+        $order = Order::factory()->create([
+            'customer_id' => $user->id,
+            'status' => Order::UNPAID,
+        ]);
 
         /**
          * @var \App\Models\Category
@@ -131,16 +122,12 @@ class OrderTest extends TestCase
         $product = Product::factory()->create(['category_id' => $category->id]);
 
         $data = [
-            'customer_id' => $customer->id,
-            'biller_id' => $user->id,
-            'paid' => $this->faker->numberBetween(1, 1000),
-            'status' => Arr::random(Order::STATUSES),
             'products' => [
                 ['id' => $product->id],
             ],
         ];
 
-        $this->put(route('v1.orders.update', ['order' => $order->id]), $data, ['Accept' => 'application/json'])
+        $this->put(route('v1.self.orders.update', ['order' => $order->id]), $data, ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJsonStructure(['data']);
     }
@@ -150,24 +137,24 @@ class OrderTest extends TestCase
      */
     public function it_should_delete_an_order()
     {
+        User::factory()->create(['role' => User::EMPLOYEE]);
+
         /**
          * @var \App\Models\User
          */
-        $user = User::factory()->create(['role' => User::ADMIN]);
+        $user = User::factory()->create();
 
         $this->actingAs($user, 'sanctum');
 
         /**
-         * @var \App\Models\User
-         */
-        $customer = User::factory()->create(['role' => User::CUSTOMER]);
-
-        /**
          * @var \App\Models\Order
          */
-        $order = Order::factory()->create();
+        $order = Order::factory()->create([
+            'customer_id' => $user->id,
+            'status' => Order::UNPAID,
+        ]);
 
-        $this->delete(route('v1.orders.destroy', ['order' => $order->id]), [], ['Accept' => 'application/json'])
+        $this->delete(route('v1.self.orders.destroy', ['order' => $order->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
     }
 }
