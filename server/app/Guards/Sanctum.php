@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Laravel\Sanctum\Guard;
 use Laravel\Sanctum\TransientToken;
-use Laravel\Sanctum\Sanctum as SanctumMain;
+use Laravel\Sanctum\Sanctum as LaravelSanctum;
 
 class Sanctum extends Guard
 {
@@ -26,8 +26,11 @@ class Sanctum extends Guard
             }
         }
 
+        /**
+         * Check not only bearer token but input as well.
+         */
         if ($token = $this->getToken($request)) {
-            $model = SanctumMain::$personalAccessTokenModel;
+            $model = LaravelSanctum::$personalAccessTokenModel;
 
             $accessToken = $model::findToken($token);
 

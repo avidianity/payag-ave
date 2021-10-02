@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Jobs\SendChangeEmailMail;
+use App\Notifications\ReVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,7 +15,7 @@ class ChangeEmailRequest extends Model
     protected static function booted()
     {
         static::created(function (self $request) {
-            dispatch(new SendChangeEmailMail($request->email, $request->user, $request));
+            $request->user->notify(new ReVerifyEmail($request));
         });
     }
 

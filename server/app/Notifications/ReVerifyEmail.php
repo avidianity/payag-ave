@@ -3,27 +3,31 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
-class ReVerifyEmail extends Notification
+class ReVerifyEmail extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
-     * @var \Illuminate\Notifications\Messages\MailMessage
+     * @var \App\Models\ChangeEmailRequest
      */
-    public $message;
+    public $request;
 
     /**
      * Create a new notification instance.
      *
-     * @param \Illuminate\Notifications\Messages\MailMessage $message
+     * @param \App\Models\ChangeEmailRequest $request
      * @return void
      */
-    public function __construct($message)
+    public function __construct($request)
     {
-        $this->message = $message;
+        $this->request = $request;
     }
 
     /**
@@ -34,7 +38,7 @@ class ReVerifyEmail extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -45,7 +49,37 @@ class ReVerifyEmail extends Notification
      */
     public function toMail($notifiable)
     {
-        return $this->message;
+        return $this->buildMailMessage($this->makeSignedUrl($notifiable));
+    }
+
+    /**
+     * Get the verify email notification mail message for the given URL.
+     *
+     * @param  string  $url
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    protected function buildMailMessage($url)
+    {
+        return (new MailMessage)
+            ->subject(Lang::get('Re-Verify Email Address'))
+            ->line(Lang::get('You have changed your email address.'))
+            ->line(Lang::get('Please click the button below to verify your email address.'))
+            ->action(Lang::get('Verify Email Address'), $url)
+            ->line(Lang::get('If you did not change your email, no further action is required.'));
+    }
+
+    protected function makeSignedUrl($notifiable)
+    {
+        return URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(config('auth.verification.expire', 60)),
+            [
+                'id' => $notifiable->getKey(),
+                'hash' => sha1($this->request->email),
+                'request_id' => $this->request->getKey(),
+                'token' => $notifiable->createToken(Str::random(10))->plainTextToken,
+            ]
+        );
     }
 
     /**
@@ -57,7 +91,8 @@ class ReVerifyEmail extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'request' => $this->request,
+            'user' => $notifiable,
         ];
     }
 }
