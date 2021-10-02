@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\Regex;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -33,7 +34,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique(User::class)->ignoreModel($this->routeModel('user', User::class))
             ],
             'password' => ['nullable', 'string'],
-            'phone' => ['nullable', 'digits:11'],
+            'phone' => ['nullable', 'digits:11', 'regex:' . Regex::phMobileNumber()],
             'picture' => ['nullable', 'file', 'image'],
         ];
     }

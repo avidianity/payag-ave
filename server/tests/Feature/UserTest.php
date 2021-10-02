@@ -56,7 +56,7 @@ class UserTest extends TestCase
         $data = [
             'name' => $this->faker->name,
             'email' => $this->faker->safeEmail,
-            'phone' => $this->faker->numberBetween(11111111111, 99999999999),
+            'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,
             'status' => true,
             'role' => Arr::random(User::ROLES),
@@ -81,7 +81,7 @@ class UserTest extends TestCase
     {
         $data = [
             'name' => $this->faker->name,
-            'phone' => $this->faker->numberBetween(11111111111, 99999999999),
+            'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,
             'status' => true,
             'role' => Arr::random(User::ROLES),
@@ -125,7 +125,7 @@ class UserTest extends TestCase
         $data = [
             'name' => $this->faker->name,
             'email' => $this->faker->safeEmail,
-            'phone' => $this->faker->numberBetween(11111111111, 99999999999),
+            'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,
             'status' => true,
             'role' => Arr::random(User::ROLES),

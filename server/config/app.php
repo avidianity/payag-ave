@@ -175,6 +175,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\SanctumServiceProvider::class,
+        App\Providers\SemaphoreServiceProvider::class,
+        App\Providers\NotificationServiceProvider::class,
     ],
 
     /*

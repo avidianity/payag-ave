@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\ChangeEmailRequest;
 use App\Models\User;
+use App\Notifications\RegisteredSMS;
 use App\Notifications\ReVerifyEmail;
 use App\Notifications\VerifyEmail;
+use Avidian\Semaphore\Client;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
@@ -16,6 +18,8 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Mockery;
+use PHPUnit\Framework\Error\Notice;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -115,16 +119,49 @@ class AuthTest extends TestCase
         $data = [
             'name' => $this->faker->name,
             'email' => $this->faker->safeEmail,
-            'phone' => $this->faker->numberBetween(11111111111, 99999999999),
+            'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,
         ];
+
+        /**
+         * @var \Mockery\MockInterface|\Mockery\LegacyMockInterface
+         */
+        $client = Mockery::mock(app(Client::class));
+
+        $response = [
+            [
+                "mssage_id" => 1234567,
+                "user_id" => 99556,
+                "user" => "user@your.org",
+                "account_id" => 90290,
+                "account" => "Your Account Name",
+                "recipient" => $data['phone'],
+                "message" => "The message you sent",
+                "sender_name" => "SEMAPHORE",
+                "network" => "Globe",
+                "status" => "Queued",
+                "type" => "Single",
+                "source" => "Api",
+                "created_at" => "2016-01-01 00:01:01",
+                "updated_at" => "2016-01-01 00:01:01",
+            ]
+        ];
+
+        $client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
+
+        $this->app->instance(Client::class, $client);
 
         Notification::fake();
 
         $this->post(route('v1.auth.register', $data), ['Accept' => 'application/json'])
             ->assertNoContent();
 
-        Notification::assertSentTo(User::firstOrFail(), VerifyEmail::class);
+        $user = User::firstOrFail();
+
+        Notification::assertSentTo($user, VerifyEmail::class);
+        Notification::assertSentTo($user, RegisteredSMS::class);
     }
 
     /**

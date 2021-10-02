@@ -87,7 +87,6 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-
         event(new Registered($user));
 
         return response('', 204);

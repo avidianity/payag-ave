@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c471a445d2fa4ef1050e3357c8bba89",
+    "content-hash": "7375d6feb1cef4b0c86de60e22fa7d24",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -61,6 +61,47 @@
                 "source": "https://github.com/asm89/stack-cors/tree/v2.0.3"
             },
             "time": "2021-03-11T06:42:03+00:00"
+        },
+        {
+            "name": "avidian/semaphore",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/avidianity/semaphorephp.git",
+                "reference": "67a105deb99a30ac9283687040c5cb879e8703a4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/avidianity/semaphorephp/zipball/67a105deb99a30ac9283687040c5cb879e8703a4",
+                "reference": "67a105deb99a30ac9283687040c5cb879e8703a4",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.3"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Avidian\\Semaphore\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "John Michael Manlupig",
+                    "email": "manlupigjohnmichael@gmail.com"
+                }
+            ],
+            "description": "A wrapper for accessing the Semaphore SMS API",
+            "support": {
+                "issues": "https://github.com/avidianity/semaphorephp/issues",
+                "source": "https://github.com/avidianity/semaphorephp/tree/master"
+            },
+            "time": "2021-08-26T06:38:53+00:00"
         },
         {
             "name": "brick/math",
@@ -9220,7 +9261,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "avidian/semaphore": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

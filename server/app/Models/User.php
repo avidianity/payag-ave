@@ -59,6 +59,11 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
+    public function routeNotificationForSemaphore($notifiable)
+    {
+        return $this->phone;
+    }
+
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = Hash::make($password);

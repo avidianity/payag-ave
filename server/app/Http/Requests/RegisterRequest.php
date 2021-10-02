@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\Regex;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -29,7 +30,7 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique(User::class)],
             'password' => ['required', 'string'],
-            'phone' => ['required', 'digits:11'],
+            'phone' => ['required', 'digits:11', 'regex:' . Regex::phMobileNumber()],
         ];
     }
 }
