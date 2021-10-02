@@ -11,7 +11,7 @@ Route::get('/forgot-password', function () {
 })->name('password.request');
 
 Route::get('/reset-password/{token}', function ($token) {
-    return redirect(frontend(sprintf('/reset-password/%s', $token)));
+    return redirect(frontend("/reset-password/$token"));
 })->name('password.reset');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
