@@ -5,7 +5,9 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -111,5 +113,37 @@ class UserTest extends TestCase
 
         $this->delete(route('v1.users.destroy', ['user' => $user->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_create_a_user_with_picture()
+    {
+        Storage::fake();
+
+        $data = [
+            'name' => $this->faker->name,
+            'email' => $this->faker->safeEmail,
+            'phone' => $this->faker->numberBetween(11111111111, 99999999999),
+            'password' => $this->faker->password,
+            'status' => true,
+            'role' => Arr::random(User::ROLES),
+            'picture' => UploadedFile::fake()->image('image.png'),
+        ];
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($user, 'sanctum');
+
+        $response = $this->post(route('v1.users.store'), $data, ['Accept' => 'application/json']);
+
+        $response->assertCreated()
+            ->assertJsonStructure(['data']);
+
+        Storage::assertExists(User::findOrFail($response->json('data')['id'])->picture->url);
     }
 }

@@ -15,7 +15,11 @@ class CategoryProductController extends Controller
      */
     public function index(Category $category)
     {
-        return ProductResource::collection($category->products()->get());
+        return ProductResource::collection(
+            $category->products()
+                ->with('picture')
+                ->get()
+        );
     }
 
     /**
@@ -27,6 +31,10 @@ class CategoryProductController extends Controller
      */
     public function show(Category $category, $id)
     {
-        return new ProductResource($category->products()->findOrFail($id));
+        return new ProductResource(
+            $category->products()
+                ->with('picture')
+                ->findOrFail($id)
+        );
     }
 }

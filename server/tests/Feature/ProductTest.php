@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -205,5 +207,41 @@ class ProductTest extends TestCase
         )
             ->assertOk()
             ->assertJsonStructure(['data']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_create_a_product_with_picture()
+    {
+        /**
+         * @var \App\Models\Category
+         */
+        $category = Category::factory()->create();
+
+        Storage::fake();
+
+        $data = [
+            'code' => $this->faker->text(5),
+            'name' => $this->faker->streetName,
+            'price' => $this->faker->numberBetween(0, 1000),
+            'cost' => $this->faker->numberBetween(0, 1000),
+            'quantity' => $this->faker->numberBetween(0, 1000),
+            'category_id' => $category->id,
+            'picture' => UploadedFile::fake()->image('image.png'),
+        ];
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($user, 'sanctum');
+
+        $this->post(route('v1.products.store'), $data, ['Accept' => 'application/json'])
+            ->assertCreated()
+            ->assertJsonStructure(['data']);
+
+        Storage::assertExists(Product::firstOrFail()->picture->url);
     }
 }

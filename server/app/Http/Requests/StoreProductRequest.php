@@ -33,6 +33,7 @@ class StoreProductRequest extends FormRequest
             'cost' => ['required', 'numeric'],
             'quantity' => ['required', 'numeric'],
             'category_id' => ['required', 'numeric', Rule::exists(Category::class, 'id')],
+            'picture' => ['nullable', 'file', 'image'],
         ];
     }
 }

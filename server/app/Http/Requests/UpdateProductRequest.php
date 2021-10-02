@@ -37,6 +37,7 @@ class UpdateProductRequest extends FormRequest
             'cost' => ['nullable', 'numeric'],
             'quantity' => ['nullable', 'numeric'],
             'category_id' => ['nullable', 'numeric', Rule::exists(Category::class, 'id')],
+            'picture' => ['nullable', 'file', 'image'],
         ];
     }
 }

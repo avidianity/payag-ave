@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\File;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
@@ -28,7 +29,15 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        return new UserResource(User::create($request->validated()));
+        $user = User::create($request->validated());
+
+        if ($request->hasFile('picture')) {
+            $file = File::process($request->file('picture'));
+
+            $user->picture()->save($file);
+        }
+
+        return new UserResource($user);
     }
 
     /**
@@ -56,6 +65,14 @@ class UserController extends Controller
         }
 
         $user->update(Arr::except($request->validated(), 'email'));
+
+        if ($request->hasFile('picture')) {
+            $file = File::process($request->file('picture'));
+
+            optional($user->picture)->delete();
+
+            $user->picture()->save($file);
+        }
 
         return new UserResource($user);
     }

@@ -34,6 +34,7 @@ class UpdateUserRequest extends FormRequest
             ],
             'password' => ['nullable', 'string'],
             'phone' => ['nullable', 'digits:11'],
+            'picture' => ['nullable', 'file', 'image'],
         ];
     }
 }

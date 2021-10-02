@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Models\File;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -16,7 +17,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return ProductResource::collection(Product::all());
+        return ProductResource::collection(Product::with('picture')->get());
     }
 
     /**
@@ -27,7 +28,15 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        return new ProductResource(Product::create($request->validated()));
+        $product = Product::create($request->validated());
+
+        if ($request->hasFile('picture')) {
+            $file = File::process($request->file('picture'));
+
+            $product->picture()->save($file);
+        }
+
+        return new ProductResource($product);
     }
 
     /**
@@ -38,6 +47,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product->load('picture');
         return new ProductResource($product);
     }
 
@@ -51,6 +61,14 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $product->update($request->validated());
+
+        if ($request->hasFile('picture')) {
+            $file = File::process($request->file('picture'));
+
+            optional($product->picture)->delete();
+
+            $product->picture()->save($file);
+        }
 
         return new ProductResource($product);
     }

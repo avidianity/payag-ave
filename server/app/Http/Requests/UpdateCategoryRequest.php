@@ -32,6 +32,7 @@ class UpdateCategoryRequest extends FormRequest
                 Rule::unique(Category::class)->ignoreModel($this->routeModel('category', Category::class))
             ],
             'name' => ['nullable', 'string', 'max:255'],
+            'picture' => ['nullable', 'file', 'image'],
         ];
     }
 }

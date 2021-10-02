@@ -20,6 +20,11 @@ class UserResource extends JsonResource
             'status' => $this->status,
             'role' => $this->role,
             'phone' => $this->phone,
+            'customer_orders' => OrderResource::collection($this->whenLoaded('ordersAsCustomer')),
+            $this->mergeWhen($this->resource->isAdmin(), [
+                'biller_orders' => OrderResource::collection($this->whenLoaded('ordersAsBiller')),
+            ]),
+            'picture' => new FileResource($this->whenLoaded('picture')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

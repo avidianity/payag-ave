@@ -32,6 +32,11 @@ class File extends Model
         });
     }
 
+    public function fileable()
+    {
+        return $this->morphTo();
+    }
+
     /**
      * Process a file dynamically.
      *

@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -119,5 +121,32 @@ class CategoryTest extends TestCase
 
         $this->delete(route('v1.categories.destroy', ['category' => $category->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_create_a_category_with_picture()
+    {
+        Storage::fake();
+
+        $data = [
+            'code' => $this->faker->text(5),
+            'name' => $this->faker->streetName,
+            'picture' => UploadedFile::fake()->image('image.png'),
+        ];
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($user, 'sanctum');
+
+        $this->post(route('v1.categories.store'), $data, ['Accept' => 'application/json'])
+            ->assertCreated()
+            ->assertJsonStructure(['data']);
+
+        Storage::assertExists(Category::firstOrFail()->picture->url);
     }
 }

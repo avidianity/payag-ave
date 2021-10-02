@@ -32,6 +32,7 @@ class StoreUserRequest extends FormRequest
             'phone' => ['required', 'digits:11'],
             'role' => ['required', 'string', Rule::in(User::ROLES)],
             'status' => ['required', 'boolean'],
+            'picture' => ['nullable', 'file', 'image'],
         ];
     }
 }

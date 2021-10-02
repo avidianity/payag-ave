@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\HasFile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
     use HasFactory;
+    use HasFile {
+        file as picture;
+    }
 
     protected $fillable = [
         'code',
@@ -18,6 +22,7 @@ class Category extends Model
     {
         static::deleting(function (self $category) {
             $category->products->each->delete();
+            optional($category->picture)->delete();
         });
     }
 

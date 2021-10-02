@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\File;
 
 class CategoryController extends Controller
 {
@@ -16,7 +17,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return CategoryResource::collection(Category::all());
+        return CategoryResource::collection(Category::with('picture')->get());
     }
 
     /**
@@ -27,7 +28,15 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        return new CategoryResource(Category::create($request->validated()));
+        $category = Category::create($request->validated());
+
+        if ($request->hasFile('picture')) {
+            $file = File::process($request->file('picture'));
+
+            $category->picture()->save($file);
+        }
+
+        return new CategoryResource($category);
     }
 
     /**
@@ -38,6 +47,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
+        $category->load('picture');
         return new CategoryResource($category);
     }
 
@@ -51,6 +61,14 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $category->update($request->validated());
+
+        if ($request->hasFile('picture')) {
+            $file = File::process($request->file('picture'));
+
+            optional($category->picture)->delete();
+
+            $category->picture()->save($file);
+        }
 
         return new CategoryResource($category);
     }
