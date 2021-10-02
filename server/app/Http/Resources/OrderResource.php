@@ -20,6 +20,7 @@ class OrderResource extends JsonResource
             'status' => $this->status,
             'customer' => $this->whenLoaded('customer'),
             'biller' => $this->whenLoaded('biller'),
+            'products' => $this->whenLoaded('products'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

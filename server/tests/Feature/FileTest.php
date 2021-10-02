@@ -17,6 +17,13 @@ class FileTest extends TestCase
      */
     public function it_should_return_a_file()
     {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
         Storage::fake();
 
         $file = File::process(UploadedFile::fake()->image('photo.jpg'));
@@ -58,6 +65,13 @@ class FileTest extends TestCase
      */
     public function it_should_return_a_collection_of_files()
     {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
         $this->get(route('v1.files.index'), ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJsonStructure(['data']);

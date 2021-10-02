@@ -24,8 +24,8 @@ class OrderFactory extends Factory
     public function definition()
     {
         return [
-            'customer_id',
-            'biller_id' => Arr::random(User::roles(User::ADMIN)),
+            'customer_id' => Arr::random(User::role(User::CUSTOMER)->get()->map->id->toArray()),
+            'biller_id' => Arr::random(User::roles([User::ADMIN, User::EMPLOYEE])->get()->map->id->toArray()),
             'paid' => $this->faker->numberBetween(1, 1000),
             'status' => Arr::random(Order::STATUSES),
         ];

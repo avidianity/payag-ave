@@ -17,6 +17,13 @@ class CategoryTest extends TestCase
      */
     public function it_should_return_a_collection_of_categories()
     {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
         $this->get(route('v1.categories.index'), ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJsonStructure(['data']);
@@ -27,6 +34,13 @@ class CategoryTest extends TestCase
      */
     public function it_should_return_a_category()
     {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
         /**
          * @var \App\Models\Category
          */
@@ -103,7 +117,7 @@ class CategoryTest extends TestCase
          */
         $category = Category::factory()->create();
 
-        $this->delete(route('v1.categories.update', ['category' => $category->id]), [], ['Accept' => 'application/json'])
+        $this->delete(route('v1.categories.destroy', ['category' => $category->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
     }
 }

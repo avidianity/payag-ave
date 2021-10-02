@@ -110,7 +110,7 @@ class UserTest extends TestCase
 
         $this->actingAs($user, 'sanctum');
 
-        $this->delete(route('v1.users.update', ['user' => $user->id]), [], ['Accept' => 'application/json'])
+        $this->delete(route('v1.users.destroy', ['user' => $user->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
     }
 }

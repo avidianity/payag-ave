@@ -18,6 +18,13 @@ class ProductTest extends TestCase
      */
     public function it_should_return_a_collection_of_products()
     {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
         $this->get(route('v1.products.index'), ['Accept' => 'application/json'])
             ->assertOk()
             ->assertJsonStructure(['data']);
@@ -28,6 +35,13 @@ class ProductTest extends TestCase
      */
     public function it_should_return_a_product()
     {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
         /**
          * @var \App\Models\Category
          */
@@ -131,7 +145,7 @@ class ProductTest extends TestCase
          */
         $product = Product::factory()->create(['category_id' => $category->id]);
 
-        $this->delete(route('v1.products.update', ['product' => $product->id]), [], ['Accept' => 'application/json'])
+        $this->delete(route('v1.products.destroy', ['product' => $product->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
     }
 
@@ -140,6 +154,13 @@ class ProductTest extends TestCase
      */
     public function it_returns_products_from_a_category()
     {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
         /**
          * @var \App\Models\Category
          */
@@ -155,6 +176,13 @@ class ProductTest extends TestCase
      */
     public function it_returns_a_product_from_a_category()
     {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
         /**
          * @var \App\Models\Category
          */

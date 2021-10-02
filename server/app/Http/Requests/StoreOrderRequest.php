@@ -31,7 +31,7 @@ class StoreOrderRequest extends FormRequest
             'customer_id' => ['required', 'numeric', Rule::exists(User::class, 'id')],
             'paid' => ['required', 'numeric'],
             'status' => ['required', 'string', Rule::in(Order::STATUSES)],
-            'products' => ['required', 'array:id', 'min:1'],
+            'products' => ['required', 'array', 'min:1'],
             'products.*.id' => ['required', 'numeric', Rule::exists(Product::class, 'id')],
         ];
     }

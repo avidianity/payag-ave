@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -44,7 +45,7 @@ class UpdateOrderRequest extends FormRequest
             'customer_id' => ['nullable', 'numeric', Rule::exists(User::class, 'id')],
             'paid' => ['nullable', 'numeric'],
             'status' => ['nullable', 'string', Rule::in(Order::STATUSES)],
-            'products' => ['required', 'array:id', 'min:1'],
+            'products' => ['required', 'array', 'min:1'],
             'products.*.id' => ['required', 'numeric', Rule::exists(Product::class, 'id')],
         ];
     }

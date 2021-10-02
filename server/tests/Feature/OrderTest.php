@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
@@ -32,7 +35,7 @@ class OrderTest extends TestCase
     /**
      * @test
      */
-    public function it_should_return_a_order()
+    public function it_should_return_an_order()
     {
         /**
          * @var \App\Models\User
@@ -40,6 +43,8 @@ class OrderTest extends TestCase
         $user = User::factory()->create(['role' => User::ADMIN]);
 
         $this->actingAs($user, 'sanctum');
+
+        User::factory()->create(['role' => User::CUSTOMER]);
 
         /**
          * @var \App\Models\Order
@@ -56,17 +61,37 @@ class OrderTest extends TestCase
      */
     public function it_should_create_a_order()
     {
-        $data = [
-            'code' => $this->faker->text(5),
-            'name' => $this->faker->streetName,
-        ];
-
         /**
          * @var \App\Models\User
          */
         $user = User::factory()->create(['role' => User::ADMIN]);
 
         $this->actingAs($user, 'sanctum');
+
+        /**
+         * @var \App\Models\User
+         */
+        $customer = User::factory()->create(['role' => User::CUSTOMER]);
+
+        /**
+         * @var \App\Models\Category
+         */
+        $category = Category::factory()->create();
+
+        /**
+         * @var \App\Models\Product
+         */
+        $product = Product::factory()->create(['category_id' => $category->id]);
+
+        $data = [
+            'customer_id' => $customer->id,
+            'biller_id' => $user->id,
+            'paid' => $this->faker->numberBetween(1, 1000),
+            'status' => Arr::random(Order::STATUSES),
+            'products' => [
+                ['id' => $product->id],
+            ],
+        ];
 
         $this->post(route('v1.orders.store'), $data, ['Accept' => 'application/json'])
             ->assertCreated()
@@ -78,11 +103,6 @@ class OrderTest extends TestCase
      */
     public function it_should_update_a_order()
     {
-        $data = [
-            'code' => $this->faker->text(5),
-            'name' => $this->faker->streetName,
-        ];
-
         /**
          * @var \App\Models\User
          */
@@ -91,9 +111,34 @@ class OrderTest extends TestCase
         $this->actingAs($user, 'sanctum');
 
         /**
+         * @var \App\Models\User
+         */
+        $customer = User::factory()->create(['role' => User::CUSTOMER]);
+
+        /**
+         * @var \App\Models\Order
+         */
+        $order = Order::factory()->create();
+
+        /**
          * @var \App\Models\Category
          */
-        $order = Category::factory()->create();
+        $category = Category::factory()->create();
+
+        /**
+         * @var \App\Models\Product
+         */
+        $product = Product::factory()->create(['category_id' => $category->id]);
+
+        $data = [
+            'customer_id' => $customer->id,
+            'biller_id' => $user->id,
+            'paid' => $this->faker->numberBetween(1, 1000),
+            'status' => Arr::random(Order::STATUSES),
+            'products' => [
+                ['id' => $product->id],
+            ],
+        ];
 
         $this->put(route('v1.orders.update', ['order' => $order->id]), $data, ['Accept' => 'application/json'])
             ->assertOk()
@@ -113,11 +158,16 @@ class OrderTest extends TestCase
         $this->actingAs($user, 'sanctum');
 
         /**
-         * @var \App\Models\Category
+         * @var \App\Models\User
          */
-        $order = Category::factory()->create();
+        $customer = User::factory()->create(['role' => User::CUSTOMER]);
 
-        $this->delete(route('v1.orders.update', ['order' => $order->id]), [], ['Accept' => 'application/json'])
+        /**
+         * @var \App\Models\Order
+         */
+        $order = Order::factory()->create();
+
+        $this->delete(route('v1.orders.destroy', ['order' => $order->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
     }
 }
