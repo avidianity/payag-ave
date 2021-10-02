@@ -30,7 +30,7 @@ class UpdateUserRequest extends FormRequest
             'email' => [
                 'nullable',
                 'email',
-                Rule::unique(User::class)->ignoreModel($this->route('user'))
+                Rule::unique(User::class)->ignoreModel($this->routeModel('user', User::class))
             ],
             'password' => ['nullable', 'string'],
             'phone' => ['nullable', 'digits:11'],

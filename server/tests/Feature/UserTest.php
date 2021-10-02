@@ -79,7 +79,6 @@ class UserTest extends TestCase
     {
         $data = [
             'name' => $this->faker->name,
-            'email' => $this->faker->safeEmail,
             'phone' => $this->faker->numberBetween(11111111111, 99999999999),
             'password' => $this->faker->password,
             'status' => true,

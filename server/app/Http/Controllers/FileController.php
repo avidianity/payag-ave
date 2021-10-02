@@ -31,7 +31,6 @@ class FileController extends Controller
         return response($content, 200, [
             'Content-Type' => $file->type,
             'Content-Length' => $file->size,
-            'Content-Disposition' => "attachment; filename='{$file->name}'",
         ]);
     }
 

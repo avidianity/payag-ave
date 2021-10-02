@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Requests\EmailVerificationRequest;
+use Illuminate\Auth\Events\Verified;
 
 Route::get('/login', function () {
     return redirect(frontend('/login'));
@@ -24,6 +25,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
         $changeEmailRequest = $user->changeEmailRequests()->findOrFail($request->input('request_id'));
         $changeEmailRequest->approved = true;
         $user->update(['email' => $changeEmailRequest->email, 'email_verified_at' => $user->freshTimestamp()]);
+        event(new Verified($user));
     } else {
         $request->fulfill();
     }

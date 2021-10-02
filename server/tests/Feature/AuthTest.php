@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\ChangeEmailRequest;
 use App\Models\User;
+use App\Notifications\ReVerifyEmail;
 use App\Notifications\VerifyEmail;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -232,5 +234,76 @@ class AuthTest extends TestCase
         Event::assertDispatched(Verified::class);
 
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
+    }
+
+    /**
+     * @test
+     */
+    public function it_sends_a_change_email_verification_email()
+    {
+
+        $data = [
+            'email' => $this->faker->safeEmail,
+        ];
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($user, 'sanctum');
+
+        Notification::fake();
+
+        $this->put(route('v1.users.update', ['user' => $user->id]), $data, ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonStructure(['data']);
+
+        Notification::assertSentTo($user, ReVerifyEmail::class);
+    }
+
+    /**
+     * @test
+     */
+    public function it_verifies_a_change_email_request()
+    {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()
+            ->create(['email' => $this->faker->unique()->email]);
+
+        $email = $this->faker->unique()->email;
+
+        ChangeEmailRequest::withoutEvents(function () use ($user, $email) {
+            $user->changeEmailRequests()->create(['email' => $email]);
+        });
+
+        /**
+         * @var \App\Models\ChangeEmailRequest
+         */
+        $request = $user->changeEmailRequests()->firstOrFail();
+
+        $route =  URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(config('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($email),
+                'token' => $user->createToken(Str::random(10))->plainTextToken,
+                'request_id' => $request->id,
+            ]
+        );
+
+        Event::fake();
+
+        $this->get($route)
+            ->assertRedirect(frontend('/email-verified'));
+
+        Event::assertDispatched(Verified::class);
+
+        $user = $user->fresh();
+
+        $this->assertTrue($user->hasVerifiedEmail() && $user->email === $email);
     }
 }

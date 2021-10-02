@@ -19,7 +19,6 @@
     </coverage>
     <php>
         <server name="APP_ENV" value="testing"/>
-        <server name="APP_URL" value="" />
         <server name="BCRYPT_ROUNDS" value="4"/>
         <server name="CACHE_DRIVER" value="database"/>
         <server name="DB_CONNECTION" value="sqlite"/>

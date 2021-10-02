@@ -12,6 +12,7 @@ use Tests\TestCase;
 class FileTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * @test
      */
@@ -33,8 +34,7 @@ class FileTest extends TestCase
 
         $this->get(route('v1.files.show', ['file' => $file->id]))
             ->assertHeader('Content-Type', $file->type)
-            ->assertHeader('Content-Length', $file->size)
-            ->assertHeader('Content-Disposition', "attachment; filename='{$file->name}'");
+            ->assertHeader('Content-Length', $file->size);
     }
 
     /**
