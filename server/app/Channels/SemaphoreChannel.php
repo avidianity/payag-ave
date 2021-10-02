@@ -27,7 +27,7 @@ class SemaphoreChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        echo 'SENNDNDDD';
+        echo 'SEND';
 
         $data = method_exists($notification, 'toSemaphore')
             ? $notification->toSemaphore()

@@ -126,7 +126,7 @@ class AuthTest extends TestCase
         /**
          * @var \Mockery\MockInterface|\Mockery\LegacyMockInterface
          */
-        $client = Mockery::mock(app(Client::class));
+        $client = Mockery::mock(Client::class);
 
         $response = [
             [
