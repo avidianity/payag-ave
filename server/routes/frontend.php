@@ -2,6 +2,7 @@
 
 use App\Http\Requests\EmailVerificationRequest;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\Request;
 
 Route::get('/login', function () {
     return redirect(frontend('/login'));
@@ -14,6 +15,14 @@ Route::get('/forgot-password', function () {
 Route::get('/reset-password/{token}', function ($token) {
     return redirect(frontend("/reset-password/$token"));
 })->name('password.reset');
+
+Route::get('/service-unavailable', function (Request $request) {
+    if ($request->expectsJson()) {
+        return response('', 503);
+    }
+
+    return redirect(frontend('/service-unavailable'));
+})->name('maintenance-mode');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     /**
