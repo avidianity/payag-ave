@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\Regex;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ResendVerificationMailRequest extends FormRequest
@@ -24,7 +25,7 @@ class ResendVerificationMailRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'email', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'regex:' . Regex::email()],
             'password' => ['required', 'string', 'max:255'],
         ];
     }

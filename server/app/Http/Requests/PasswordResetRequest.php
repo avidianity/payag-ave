@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\Regex;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PasswordResetRequest extends FormRequest
@@ -25,7 +26,7 @@ class PasswordResetRequest extends FormRequest
     {
         return [
             'token' => ['required', 'string'],
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'regex:' . Regex::email()],
             'password' => ['required', 'string', 'confirmed'],
         ];
     }

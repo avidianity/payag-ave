@@ -54,7 +54,7 @@ class UserTest extends TestCase
     public function it_should_create_a_user()
     {
         $data = [
-            'name' => $this->faker->name,
+            'name' => $this->faker->firstName,
             'email' => $this->faker->safeEmail,
             'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,
@@ -80,7 +80,7 @@ class UserTest extends TestCase
     public function it_should_update_a_user()
     {
         $data = [
-            'name' => $this->faker->name,
+            'name' => $this->faker->firstName,
             'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,
             'status' => true,
@@ -123,7 +123,7 @@ class UserTest extends TestCase
         Storage::fake();
 
         $data = [
-            'name' => $this->faker->name,
+            'name' => $this->faker->firstName,
             'email' => $this->faker->safeEmail,
             'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,

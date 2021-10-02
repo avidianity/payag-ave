@@ -19,6 +19,15 @@ final class Regex
     }
 
     /**
+     * letters and space
+     * @return string
+     */
+    public static function letters()
+    {
+        return '/^[a-zA-ZÑñ\s]+$/';
+    }
+
+    /**
      * letters, digits and space
      * @return string
      */

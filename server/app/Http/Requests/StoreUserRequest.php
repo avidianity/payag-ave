@@ -27,8 +27,8 @@ class StoreUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique(User::class)],
+            'name' => ['required', 'string', 'regex:' . Regex::letters()],
+            'email' => ['required', 'email', Rule::unique(User::class), 'regex:' . Regex::email()],
             'password' => ['required', 'string'],
             'phone' => ['required', 'digits:11', 'regex:' . Regex::phMobileNumber()],
             'role' => ['required', 'string', Rule::in(User::ROLES)],

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\Regex;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SendForgotPasswordMailRequest extends FormRequest
@@ -24,7 +25,7 @@ class SendForgotPasswordMailRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'regex:' . Regex::email()],
         ];
     }
 }

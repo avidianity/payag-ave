@@ -49,4 +49,9 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'biller_id');
     }
+
+    public function getIdentifier()
+    {
+        return "order-{$this->id}-{$this->created_at->timestamp}";
+    }
 }

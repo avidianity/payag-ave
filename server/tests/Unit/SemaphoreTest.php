@@ -38,7 +38,9 @@ class SemaphoreTest extends TestCase
             ]
         ];
 
-        $client->shouldReceive('send')->andReturn($response);
+        $client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
 
         $testResponse = $client->send('09991234567', 'The message you sent');
 

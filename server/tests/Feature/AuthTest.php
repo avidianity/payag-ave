@@ -118,7 +118,7 @@ class AuthTest extends TestCase
     public function it_should_register_a_user()
     {
         $data = [
-            'name' => $this->faker->name,
+            'name' => $this->faker->firstName,
             'email' => $this->faker->safeEmail,
             'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,

@@ -27,7 +27,7 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['nullable', 'string'],
+            'name' => ['nullable', 'string', 'regex:' . Regex::letters()],
             'email' => [
                 'nullable',
                 'email',
