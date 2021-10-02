@@ -2,10 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Channels\SemaphoreChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class RegisteredSMS extends Notification implements ShouldQueue

@@ -2,7 +2,6 @@
 
 namespace App\Channels;
 
-use App\Models\User;
 use Avidian\Semaphore\Client;
 use Illuminate\Notifications\Notification;
 
@@ -27,10 +26,8 @@ class SemaphoreChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        echo 'SEND';
-
         $data = method_exists($notification, 'toSemaphore')
-            ? $notification->toSemaphore()
+            ? $notification->toSemaphore($notifiable)
             : $notifiable->toArray($notifiable);
 
         $message = $data['message'];

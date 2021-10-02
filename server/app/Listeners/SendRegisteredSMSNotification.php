@@ -16,6 +16,7 @@ class SendRegisteredSMSNotification
      */
     public function handle(Registered $event)
     {
+        echo 'ehe';
         optional($event->user)->notify(new RegisteredSMS(
             __('sms.registered', [
                 'app' => config('app.name'),

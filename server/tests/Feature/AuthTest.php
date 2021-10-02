@@ -14,6 +14,7 @@ use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
@@ -122,36 +123,6 @@ class AuthTest extends TestCase
             'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
             'password' => $this->faker->password,
         ];
-
-        /**
-         * @var \Mockery\MockInterface|\Mockery\LegacyMockInterface
-         */
-        $client = Mockery::mock(Client::class);
-
-        $response = [
-            [
-                "mssage_id" => 1234567,
-                "user_id" => 99556,
-                "user" => "user@your.org",
-                "account_id" => 90290,
-                "account" => "Your Account Name",
-                "recipient" => $data['phone'],
-                "message" => "The message you sent",
-                "sender_name" => "SEMAPHORE",
-                "network" => "Globe",
-                "status" => "Queued",
-                "type" => "Single",
-                "source" => "Api",
-                "created_at" => "2016-01-01 00:01:01",
-                "updated_at" => "2016-01-01 00:01:01",
-            ]
-        ];
-
-        $client->shouldReceive('send')
-            ->once()
-            ->andReturn($response);
-
-        $this->app->instance(Client::class, $client);
 
         Notification::fake();
 
