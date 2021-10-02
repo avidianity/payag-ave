@@ -134,4 +134,48 @@ class ProductTest extends TestCase
         $this->delete(route('v1.products.update', ['product' => $product->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
     }
+
+    /**
+     * @test
+     */
+    public function it_returns_products_from_a_category()
+    {
+        /**
+         * @var \App\Models\Category
+         */
+        $category = Category::factory()->create();
+
+        $this->get(route('v1.categories.products.index', ['category' => $category->id]), ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonStructure(['data']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_a_product_from_a_category()
+    {
+        /**
+         * @var \App\Models\Category
+         */
+        $category = Category::factory()->create();
+
+        /**
+         * @var \App\Models\Product
+         */
+        $product = Product::factory()->create(['category_id' => $category->id]);
+
+        $this->get(
+            route(
+                'v1.categories.products.index',
+                [
+                    'category' => $category->id,
+                    'product' => $product->id,
+                ]
+            ),
+            ['Accept' => 'application/json']
+        )
+            ->assertOk()
+            ->assertJsonStructure(['data']);
+    }
 }

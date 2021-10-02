@@ -1,8 +1,10 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Resources;
 
-class {{ class }} extends JsonResource
+use App\Models\OrderProduct;
+
+class OrderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +16,10 @@ class {{ class }} extends JsonResource
     {
         return [
             'id' => $this->id,
+            'paid' => $this->paid,
+            'status' => $this->status,
+            'customer' => $this->whenLoaded('customer'),
+            'biller' => $this->whenLoaded('biller'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

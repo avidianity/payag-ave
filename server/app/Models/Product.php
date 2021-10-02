@@ -18,8 +18,22 @@ class Product extends Model
         'category_id'
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function (self $product) {
+            $product->orders->each->delete();
+        });
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class)
+            ->withTimestamps()
+            ->using(OrderProduct::class);
     }
 }

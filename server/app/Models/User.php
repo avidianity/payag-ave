@@ -47,6 +47,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         static::deleting(function (self $user) {
             $user->changeEmailRequests->each->delete();
+            $user->ordersAsCustomer->each->delete();
+            $user->ordersAsBiller->each->delete();
         });
     }
 
@@ -81,6 +83,30 @@ class User extends Authenticatable implements MustVerifyEmail
         Cache::delete($this->getLockingKey());
     }
 
+    /**
+     * Filter by role
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $role
+     * @return void
+     */
+    public function scopeRole($query, $role)
+    {
+        return $query->where('role', $role);
+    }
+
+    /**
+     * Filter by roles
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string[] $roles
+     * @return void
+     */
+    public function scopeRoles($query, $roles)
+    {
+        return $query->whereIn('role', $roles);
+    }
+
     public function isAdmin()
     {
         return $this->role === static::ADMIN;
@@ -94,5 +120,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isEmployee()
     {
         return $this->role === static::EMPLOYEE;
+    }
+
+    public function ordersAsCustomer()
+    {
+        return $this->hasMany(Order::class, 'customer_id');
+    }
+
+    public function ordersAsBiller()
+    {
+        return $this->hasMany(Order::class, 'biller_id');
     }
 }
