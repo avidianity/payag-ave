@@ -76,4 +76,33 @@ class FileTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(['data']);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_return_a_file_with_model()
+    {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
+        Storage::fake();
+
+        /**
+         * @var \App\Models\File
+         */
+        $file = $user->picture()
+            ->save(File::process(UploadedFile::fake()->image('photo.jpg')));
+
+        Storage::assertExists($file->url);
+
+        $this->get(route('v1.files.show', ['file' => $file->id]))
+            ->assertHeader('Content-Type', $file->type)
+            ->assertHeader('Content-Length', $file->size)
+            ->assertHeader('Fileable-Type', $file->fileable_type)
+            ->assertHeader('Fileable-ID', $file->fileable_id);
+    }
 }

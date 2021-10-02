@@ -15,7 +15,7 @@ class FileController extends Controller
      */
     public function index()
     {
-        return FileResource::collection(File::all());
+        return FileResource::collection(File::with('fileable')->get());
     }
 
     /**
@@ -28,10 +28,17 @@ class FileController extends Controller
     {
         $content = Storage::get($file->url);
 
-        return response($content, 200, [
+        $headers = [
             'Content-Type' => $file->type,
             'Content-Length' => $file->size,
-        ]);
+        ];
+
+        if ($file->fileable !== null) {
+            $headers['Fileable-ID'] = $file->fileable_id;
+            $headers['Fileable-Type'] = $file->fileable_type;
+        }
+
+        return response($content, 200, $headers);
     }
 
     /**
