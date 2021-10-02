@@ -195,7 +195,7 @@ class ProductTest extends TestCase
 
         $this->get(
             route(
-                'v1.categories.products.index',
+                'v1.categories.products.show',
                 [
                     'category' => $category->id,
                     'product' => $product->id,
