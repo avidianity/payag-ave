@@ -26,6 +26,10 @@ Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/forgot-password', [AuthController::class, 'sendForgotPasswordEmail'])->name('password.email');
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('/check', [AuthController::class, 'check'])->name('check');
+    });
 });
 
 Route::group(['middleware' => 'auth:sanctum'], function () {

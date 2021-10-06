@@ -1,10 +1,12 @@
 import { useURL } from '@avidian/hooks';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import { Route, RouteProps, Switch, useHistory } from 'react-router-dom';
 import Navbar from '../../components/Dashboard/Navbar';
 import Sidebar from '../../components/Dashboard/Sidebar';
+import { AuthContext } from '../../contexts/auth.context';
 import { navbarEvents } from '../../events';
 import { useGlobalState } from '../../hooks';
+import { UserRoles } from '../../interfaces/user.interface';
 import { routes } from '../../routes';
 import Categories from './Categories';
 
@@ -14,6 +16,7 @@ const Dashboard: FC<Props> = (props) => {
 	const url = useURL();
 	const history = useHistory();
 	const state = useGlobalState();
+	const { user } = useContext(AuthContext);
 
 	const links: RouteProps[] = [
 		{
@@ -32,6 +35,13 @@ const Dashboard: FC<Props> = (props) => {
 			navbarEvents.unlisten(key);
 		};
 	}, [navbarEvents, history, state]);
+
+	useEffect(() => {
+		if (!user || user.role === UserRoles.CUSTOMER) {
+			history.push(routes.LOGIN);
+		}
+		// eslint-disable-next-line
+	}, []);
 
 	return (
 		<div className='h-full w-full fixed flex'>

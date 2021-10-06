@@ -1,6 +1,9 @@
 import axios from 'axios';
 import '@avidian/extras';
 import State from '@avidian/state';
+import toastr from 'toastr';
+
+window.toastr = toastr;
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
 axios.defaults.headers.common['Accept'] = 'application/json';

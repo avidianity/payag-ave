@@ -39,6 +39,8 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
         $request->fulfill();
     }
 
+    $user->update(['status' => true]);
+
     /**
      * @var \App\Models\Token
      */
@@ -46,5 +48,5 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 
     $token->delete();
 
-    return redirect(frontend('/email-verified'));
+    return redirect(frontend('/login'));
 })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');

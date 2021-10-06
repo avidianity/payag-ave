@@ -8,12 +8,17 @@ export function useRebuildTooltip() {
 	});
 
 	useEffect(() => {
-		const elements = Array.from(document.querySelector('.sc-ezredP.jexnEe')!.querySelectorAll('button'));
-		elements.map((element) => {
-			element.addEventListener('click', () => {
-				setTimeout(() => Tooltip.rebuild(), 250);
-			});
-		});
+		setTimeout(() => {
+			const paginationButton = document.querySelector('.sc-ezredP.jexnEe');
+			if (paginationButton) {
+				const elements = Array.from(paginationButton.querySelectorAll('button'));
+				elements.forEach((element) => {
+					element.addEventListener('click', () => {
+						setTimeout(() => Tooltip.rebuild(), 250);
+					});
+				});
+			}
+		}, 500);
 	}, []);
 }
 
@@ -36,15 +41,24 @@ export function useGlobalState() {
 
 	const clear = () => {
 		state.clear();
-		setValues(state.getAll());
+		setValues({});
+	};
+
+	const has = (key: string) => {
+		if (key in values) {
+			return true;
+		}
+
+		return state.has(key);
 	};
 
 	return {
 		get,
 		set,
+		clear,
+		has,
 		listen: state.listen.bind(state),
 		unlisten: state.unlisten.bind(state),
 		dispatch: state.dispatch.bind(state),
-		clear,
 	};
 }

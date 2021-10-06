@@ -244,4 +244,44 @@ class ProductTest extends TestCase
 
         Storage::assertExists(Product::firstOrFail()->picture->url);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_update_a_product_with_picture()
+    {
+        Storage::fake();
+
+        $data = [
+            'code' => $this->faker->text(5),
+            'name' => $this->faker->streetName,
+            'price' => $this->faker->numberBetween(0, 1000),
+            'cost' => $this->faker->numberBetween(0, 1000),
+            'quantity' => $this->faker->numberBetween(0, 1000),
+            'picture' => UploadedFile::fake()->image('image.png'),
+        ];
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($user, 'sanctum');
+
+        /**
+         * @var \App\Models\Category
+         */
+        $category = Category::factory()->create();
+
+        /**
+         * @var \App\Models\Product
+         */
+        $product = Product::factory()->create(['category_id' => $category->id]);
+
+        $this->put(route('v1.products.update', ['product' => $product->id]), $data, ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonStructure(['data']);
+
+        Storage::assertExists($product->picture->fresh()->url);
+    }
 }

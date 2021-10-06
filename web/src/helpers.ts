@@ -1,8 +1,16 @@
 import { isArray, isString } from 'lodash';
 import toastr from 'toastr';
+import { UserInterface, UserRoles } from './interfaces/user.interface';
+import routes from './routes.json';
+import { routes as mainRoutes } from './routes';
 
 let networkHandle: number | null = null;
 let authHandle: number | null = null;
+
+export function getUserMainPage(user: UserInterface) {
+	console.log(user);
+	return user.role === UserRoles.CUSTOMER ? mainRoutes.HOME : mainRoutes.DASHBOARD;
+}
 
 export function handleError(error: any, useHandle = true) {
 	if (error) {
@@ -20,7 +28,11 @@ export function handleError(error: any, useHandle = true) {
 
 				if (response.status === 401) {
 					if (authHandle === null) {
-						toastr.error('Authentication has expired. Please try logging in and try again.');
+						if (response.data.message && !response.data.message.includes('Unauthenticated')) {
+							toastr.error(response.data.message);
+						} else {
+							toastr.error('Authentication has expired. Please try logging in and try again.');
+						}
 						authHandle = setTimeout(() => {
 							if (authHandle !== null) {
 								clearTimeout(authHandle);
@@ -56,4 +68,24 @@ export function handleError(error: any, useHandle = true) {
 	} else {
 		return toastr.error('Something went wrong, please try again later.', 'Oops!');
 	}
+}
+
+export function route(name: keyof typeof routes, parameters?: Record<string, any>) {
+	if (!(name in routes)) {
+		throw new Error(`${name} does not exist in routes file.`);
+	}
+
+	const route = routes[name];
+
+	if (parameters) {
+		let url = route.uri;
+		for (const key in parameters) {
+			const value = parameters[key];
+			url = url.replace(`{${key}}`, value.toString());
+		}
+
+		return `/${url}`;
+	}
+
+	return `/${route.uri}`;
 }

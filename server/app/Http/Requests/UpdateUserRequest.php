@@ -34,7 +34,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique(User::class)->ignoreModel($this->routeModel('user', User::class))
             ],
             'password' => ['nullable', 'string'],
-            'phone' => ['nullable', 'digits:11', 'regex:' . Regex::phMobileNumber()],
+            'phone' => ['nullable', 'regex:' . Regex::phMobileNumber()],
             'picture' => ['nullable', 'file', 'image'],
         ];
     }

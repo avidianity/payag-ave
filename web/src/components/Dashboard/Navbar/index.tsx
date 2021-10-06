@@ -1,6 +1,7 @@
 import { useToggle } from '@avidian/hooks';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { AuthContext } from '../../../contexts/auth.context';
 import { navbarEvents, sidebarEvents } from '../../../events';
 import Input from '../../Forms/Input';
 import Menu from './Menu';
@@ -15,6 +16,7 @@ const Navbar: FC<Props> = (props) => {
 	const { register, handleSubmit } = useForm<SearchInputs>();
 	const [sidebarOpen, setSidebarOpen] = useToggle(false);
 	const [menuOpen, setMenuOpen] = useToggle(false);
+	const { user } = useContext(AuthContext);
 
 	const submit = async (data: SearchInputs) => {
 		navbarEvents.dispatch('search', data.query);
@@ -55,7 +57,7 @@ const Navbar: FC<Props> = (props) => {
 					}
 				}}>
 				<i className='fas fa-user-circle fa-2x group-hover:text-gray-800 text-gray-500'></i>
-				<span className='mb-1 ml-1 hidden sm:inline group-hover:text-gray-800 text-gray-500'>John Doe</span>
+				<span className='mb-1 ml-1 hidden sm:inline group-hover:text-gray-800 text-gray-500'>{user?.name}</span>
 			</button>
 			{menuOpen ? <Menu /> : null}
 		</div>

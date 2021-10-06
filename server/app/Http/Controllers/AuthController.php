@@ -109,7 +109,7 @@ class AuthController extends Controller
 
     public function check(Request $request)
     {
-        return $request->user('sanctum');
+        return new UserResource($request->user('sanctum'));
     }
 
     public function sendForgotPasswordEmail(SendForgotPasswordMailRequest $request)

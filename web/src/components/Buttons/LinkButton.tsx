@@ -1,12 +1,11 @@
 import React, { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
 
-interface Props extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
+interface Props extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
 	buttonSize?: 'sm' | 'md' | 'lg' | 'xl';
 	color?: 'gray' | 'red' | 'yellow' | 'green' | 'blue' | 'indigo' | 'purple' | 'pink';
-	tip?: string;
 }
 
-const Button = forwardRef<HTMLButtonElement, Props>(({ buttonSize, color, tip, ...props }, ref) => {
+const LinkButton = forwardRef<HTMLAnchorElement, Props>(({ buttonSize, color, ...props }, ref) => {
 	const [h, px] = {
 		sm: ['py-1', 'px-3'],
 		md: ['py-2', 'px-4'],
@@ -15,15 +14,15 @@ const Button = forwardRef<HTMLButtonElement, Props>(({ buttonSize, color, tip, .
 	}[buttonSize || 'md'];
 
 	return (
-		<button
+		<a
 			ref={ref}
 			{...props}
 			className={`flex items-center ${h} rounded-lg bg-${color || 'blue'}-600 text-white ${px} hover:bg-${color || 'blue'}-700 ${
 				props.className || ''
-			}`}>
+			} disabled:opacity-70`}>
 			{props.children}
-		</button>
+		</a>
 	);
 });
 
-export default Button;
+export default LinkButton;

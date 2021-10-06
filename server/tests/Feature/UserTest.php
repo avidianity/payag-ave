@@ -146,4 +146,34 @@ class UserTest extends TestCase
 
         Storage::assertExists(User::findOrFail($response->json('data')['id'])->picture->url);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_update_a_user_with_picture()
+    {
+        Storage::fake();
+
+        $data = [
+            'name' => $this->faker->firstName,
+            'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
+            'password' => $this->faker->password,
+            'status' => true,
+            'role' => Arr::random(User::ROLES),
+            'picture' => UploadedFile::fake()->image('image.png'),
+        ];
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($user, 'sanctum');
+
+        $this->put(route('v1.users.update', ['user' => $user->id]), $data, ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonStructure(['data']);
+
+        Storage::assertExists($user->picture->fresh()->url);
+    }
 }

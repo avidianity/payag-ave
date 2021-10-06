@@ -1,44 +1,46 @@
-import React, { FC, useEffect } from 'react';
-import Button from '../../../components/Button';
+import React, { FC } from 'react';
+import Button from '../../../components/Buttons/Button';
 import Table from 'react-data-table-component';
 import Tooltip from 'react-tooltip';
 import { useURL } from '@avidian/hooks';
-import { useHistory } from 'react-router';
 import { useRebuildTooltip } from '../../../hooks';
 import ImageModal from '@avidian/react-modal-image';
+import { useQuery } from 'react-query';
+import { getCategories } from '../../../queries/category.queries';
+import dayjs from 'dayjs';
+import Spinner from '../../../components/Spinner';
+import RouterLinkButton from '../../../components/Buttons/RouterLinkButton';
+import View from '../../../components/Dashboard/View';
+import Head from '../../../components/Dashboard/View/Head';
+import Body from '../../../components/Card/Body';
 
 type Props = {};
 
 const List: FC<Props> = (props) => {
 	const url = useURL();
-	const history = useHistory();
 	useRebuildTooltip();
-
-	const data = Array.from(Array(50).keys()).map(() => {
-		return {
-			id: String.random(40),
-			image: 'https://via.placeholder.com/200',
-			name: String.random(10),
-			code: String.random(5).toUpperCase(),
-		};
-	});
+	const { data, refetch, isFetching } = useQuery('categories', getCategories);
 
 	return (
-		<div className='px-4 sm:px-10 pt-8'>
-			<div className='flex items-center mt-8 mb-16'>
+		<View>
+			<Head>
 				<h3>Categories</h3>
 				<Button
 					buttonSize='sm'
-					color='green'
-					className='ml-auto'
+					color='indigo'
+					className='ml-auto w-20 flex items-center justify-center'
 					onClick={(e) => {
 						e.preventDefault();
-						history.push(url('/add'));
-					}}>
-					+ Add Category
+						refetch();
+					}}
+					disabled={isFetching}>
+					{isFetching ? <Spinner /> : 'Refresh'}
 				</Button>
-			</div>
-			<div className='border-2 rounded-lg border-gray-200 shadow-lg px-4 py-2'>
+				<RouterLinkButton to={url('add')} buttonSize='sm' color='green' className='ml-1'>
+					+ Add Category
+				</RouterLinkButton>
+			</Head>
+			<Body>
 				<Table
 					pagination
 					fixedHeader
@@ -50,15 +52,18 @@ const List: FC<Props> = (props) => {
 						},
 						{
 							name: 'Image',
-							cell: (row) => (
-								<ImageModal
-									small={row.image}
-									medium={row.image}
-									large={row.image}
-									alt={row.name}
-									className='rounded-md shadow-sm h-10 w-10'
-								/>
-							),
+							cell: (row) => {
+								const url = row.picture?.url || 'https://via.placeholder.com/200';
+								return (
+									<ImageModal
+										small={url}
+										medium={url}
+										large={url}
+										alt={row.name}
+										className='rounded-md shadow-sm h-10 w-10'
+									/>
+								);
+							},
 						},
 						{
 							name: 'Name',
@@ -71,19 +76,35 @@ const List: FC<Props> = (props) => {
 							sortable: true,
 						},
 						{
+							name: 'Created',
+							selector: (row) => dayjs(row.created_at).format('MMMM DD, YYYY hh:mm A'),
+							sortable: true,
+							minWidth: '225px',
+						},
+						{
 							name: 'Actions',
 							cell: (row) => (
 								<div className='flex items-center'>
-									<Button buttonSize='sm' color='blue' className='mx-1 h-8 w-8 flex justify-center' data-tip='View'>
+									<RouterLinkButton
+										to={url(`${row.id}/view`)}
+										buttonSize='sm'
+										color='blue'
+										className='mx-1 h-8 w-8 flex justify-center'
+										data-tip='View'>
 										<i className='material-icons' style={{ fontSize: '13px' }}>
 											visibility
 										</i>
-									</Button>
-									<Button buttonSize='sm' color='yellow' className='mx-1 h-8 w-8 flex justify-center' data-tip='Edit'>
+									</RouterLinkButton>
+									<RouterLinkButton
+										to={url(`${row.id}/edit`)}
+										buttonSize='sm'
+										color='yellow'
+										className='mx-1 h-8 w-8 flex justify-center'
+										data-tip='Edit'>
 										<i className='material-icons' style={{ fontSize: '13px' }}>
 											edit
 										</i>
-									</Button>
+									</RouterLinkButton>
 									<Button buttonSize='sm' color='red' className='mx-1 h-8 w-8 flex justify-center' data-tip='Delete'>
 										<i className='material-icons' style={{ fontSize: '13px' }}>
 											delete
@@ -93,7 +114,7 @@ const List: FC<Props> = (props) => {
 							),
 						},
 					]}
-					data={data}
+					data={data || []}
 					customStyles={{
 						rows: {
 							style: {
@@ -102,9 +123,9 @@ const List: FC<Props> = (props) => {
 						},
 					}}
 				/>
-			</div>
+			</Body>
 			<Tooltip />
-		</div>
+		</View>
 	);
 };
 

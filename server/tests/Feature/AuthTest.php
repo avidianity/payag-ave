@@ -7,25 +7,38 @@ use App\Models\User;
 use App\Notifications\RegisteredSMS;
 use App\Notifications\ReVerifyEmail;
 use App\Notifications\VerifyEmail;
-use Avidian\Semaphore\Client;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Mockery;
-use PHPUnit\Framework\Error\Notice;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
+
+    /**
+     * @test
+     */
+    public function it_should_return_a_user()
+    {
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create();
+
+        $this->actingAs($user, 'sanctum');
+
+        $this->get(route('v1.auth.check'))
+            ->assertJsonStructure(['data'])
+            ->assertOk();
+    }
 
     /**
      * @test
@@ -39,7 +52,8 @@ class AuthTest extends TestCase
         $this->post(route('v1.auth.login', $data), ['Accept' => 'application/json'])->assertOk()
             ->assertJsonStructure([
                 'token', 'user'
-            ]);
+            ])
+            ->assertOk();
     }
 
     /**
@@ -82,7 +96,7 @@ class AuthTest extends TestCase
         $user->save();
 
         $this->post(route('v1.auth.login', $data), ['Accept' => 'application/json'])
-            ->assertStatus(403);
+            ->assertForbidden();
     }
 
     /**
@@ -106,10 +120,10 @@ class AuthTest extends TestCase
         $this->travel(1)->hours();
 
         $this->post(route('v1.auth.login', $data), ['Accept' => 'application/json'])
-            ->assertOk()
             ->assertJsonStructure([
                 'token', 'user'
-            ]);
+            ])
+            ->assertOk();
     }
 
     /**
@@ -117,11 +131,14 @@ class AuthTest extends TestCase
      */
     public function it_should_register_a_user()
     {
+        $password = $this->faker->password;
+
         $data = [
             'name' => $this->faker->firstName,
             'email' => $this->faker->safeEmail,
             'phone' => '09' . $this->faker->numberBetween(111111111, 999999999),
-            'password' => $this->faker->password,
+            'password' => $password,
+            'password_confirmation' => $password,
         ];
 
         Notification::fake();
@@ -237,7 +254,7 @@ class AuthTest extends TestCase
         );
 
         $this->get($route)
-            ->assertRedirect(frontend('/email-verified'));
+            ->assertRedirect(frontend('/login'));
 
         Event::assertDispatched(Verified::class);
 
@@ -264,8 +281,8 @@ class AuthTest extends TestCase
         Notification::fake();
 
         $this->put(route('v1.users.update', ['user' => $user->id]), $data, ['Accept' => 'application/json'])
-            ->assertOk()
-            ->assertJsonStructure(['data']);
+            ->assertJsonStructure(['data'])
+            ->assertOk();
 
         Notification::assertSentTo($user, ReVerifyEmail::class);
     }
@@ -306,7 +323,7 @@ class AuthTest extends TestCase
         Event::fake();
 
         $this->get($route)
-            ->assertRedirect(frontend('/email-verified'));
+            ->assertRedirect(frontend('/login'));
 
         Event::assertDispatched(Verified::class);
 

@@ -29,8 +29,8 @@ class RegisterRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'regex:' . Regex::letters()],
             'email' => ['required', 'email', Rule::unique(User::class), 'regex:' . Regex::email()],
-            'password' => ['required', 'string'],
-            'phone' => ['required', 'digits:11', 'regex:' . Regex::phMobileNumber()],
+            'password' => ['required', 'string', 'confirmed'],
+            'phone' => ['required', 'regex:' . Regex::phMobileNumber()],
         ];
     }
 }

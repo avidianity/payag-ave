@@ -149,4 +149,36 @@ class CategoryTest extends TestCase
 
         Storage::assertExists(Category::firstOrFail()->picture->url);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_update_a_category_with_picture()
+    {
+        Storage::fake();
+
+        $data = [
+            'code' => $this->faker->text(5),
+            'name' => $this->faker->streetName,
+            'picture' => UploadedFile::fake()->image('image.png'),
+        ];
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($user, 'sanctum');
+
+        /**
+         * @var \App\Models\Category
+         */
+        $category = Category::factory()->create();
+
+        $this->put(route('v1.categories.update', ['category' => $category->id]), $data, ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonStructure(['data']);
+
+        Storage::assertExists($category->picture->fresh()->url);
+    }
 }

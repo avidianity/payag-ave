@@ -1,6 +1,7 @@
 import { useURL } from '@avidian/hooks';
 import React, { FC } from 'react';
 import { Route, RouteProps, Switch } from 'react-router-dom';
+import Form from './Form';
 import List from './List';
 
 type Props = {};
@@ -13,6 +14,14 @@ const Categories: FC<Props> = (props) => {
 			path: url(''),
 			component: List,
 			exact: true,
+		},
+		{
+			path: url('add'),
+			component: Form,
+		},
+		{
+			path: url(':id/edit'),
+			component: Form,
 		},
 	];
 

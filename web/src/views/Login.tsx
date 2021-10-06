@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import Button from '../components/Button';
+import React, { FC, useContext, useEffect } from 'react';
+import Button from '../components/Buttons/Button';
 import Card from '../components/Card';
 import Body from '../components/Card/Body';
 import Header from '../components/Card/Header';
@@ -15,9 +15,10 @@ import { UserInterface } from '../interfaces/user.interface';
 import { useHistory } from 'react-router';
 import Spinner from '../components/Spinner';
 import axios from 'axios';
-import { handleError } from '../helpers';
+import { getUserMainPage, handleError, route } from '../helpers';
 import { LoginResponse } from '../responses/login.response';
 import { useGlobalState } from '../hooks';
+import { AuthContext } from '../contexts/auth.context';
 
 type Props = {};
 
@@ -30,26 +31,41 @@ const Login: FC<Props> = (props) => {
 	const { register, handleSubmit, reset } = useForm<Inputs>();
 	const history = useHistory();
 	const state = useGlobalState();
+	const { user, setUser, setToken } = useContext(AuthContext);
 
 	const submit = async (payload: Inputs) => {
 		setProcessing(true);
 		try {
 			const {
 				data: { user, token },
-			} = await axios.post<LoginResponse>('/v1/auth/login', payload);
+			} = await axios.post<LoginResponse>(route('v1.auth.login'), payload);
 
 			if (payload.remember_me) {
 				state.set('token', token);
+				state.set('user', user);
 			}
 
+			setUser(user);
+			setToken(token);
+
 			reset();
-			history.push(routes.DASHBOARD);
+
+			toastr.success(`Welcome back, ${user.name}!`);
+
+			history.push(getUserMainPage(user));
 		} catch (error: any) {
 			handleError(error);
 		} finally {
 			setProcessing(false);
 		}
 	};
+
+	useEffect(() => {
+		if (user) {
+			history.push(getUserMainPage(user));
+		}
+		// esline-disable-next-line
+	}, []);
 
 	return (
 		<CenterFlexContainer>
