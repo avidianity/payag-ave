@@ -16,7 +16,7 @@ const Dashboard: FC<Props> = (props) => {
 	const url = useURL();
 	const history = useHistory();
 	const state = useGlobalState();
-	const { user } = useContext(AuthContext);
+	const { user, setUser, setToken } = useContext(AuthContext);
 
 	const links: RouteProps[] = [
 		{
@@ -28,7 +28,10 @@ const Dashboard: FC<Props> = (props) => {
 	useEffect(() => {
 		const key = navbarEvents.listen('logout', () => {
 			state.clear();
+			setUser(null);
+			setToken(null);
 			history.push(routes.LOGIN);
+			toastr.info('Logged out successfully!');
 		});
 
 		return () => {

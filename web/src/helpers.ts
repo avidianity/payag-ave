@@ -70,6 +70,14 @@ export function handleError(error: any, useHandle = true) {
 	}
 }
 
+export function urlWithToken(url: string, token: string) {
+	const uri = new URL(url);
+
+	uri.searchParams.set('token', token);
+
+	return uri.toString();
+}
+
 export function route(name: keyof typeof routes, parameters?: Record<string, any>) {
 	if (!(name in routes)) {
 		throw new Error(`${name} does not exist in routes file.`);

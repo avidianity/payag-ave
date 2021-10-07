@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import Button from '../../../components/Buttons/Button';
 import Table from 'react-data-table-component';
 import Tooltip from 'react-tooltip';
@@ -6,13 +6,17 @@ import { useURL } from '@avidian/hooks';
 import { useRebuildTooltip } from '../../../hooks';
 import ImageModal from '@avidian/react-modal-image';
 import { useQuery } from 'react-query';
-import { getCategories } from '../../../queries/category.queries';
+import { deleteCategory, getCategories } from '../../../queries/category.queries';
 import dayjs from 'dayjs';
 import Spinner from '../../../components/Spinner';
 import RouterLinkButton from '../../../components/Buttons/RouterLinkButton';
 import View from '../../../components/Dashboard/View';
 import Head from '../../../components/Dashboard/View/Head';
 import Body from '../../../components/Card/Body';
+import { AuthContext } from '../../../contexts/auth.context';
+import { handleError, urlWithToken } from '../../../helpers';
+import { CategoryInterface } from '../../../interfaces/category.interface';
+import swal from 'sweetalert';
 
 type Props = {};
 
@@ -20,6 +24,26 @@ const List: FC<Props> = (props) => {
 	const url = useURL();
 	useRebuildTooltip();
 	const { data, refetch, isFetching } = useQuery('categories', getCategories);
+	const { token } = useContext(AuthContext);
+
+	const remove = async (row: CategoryInterface) => {
+		try {
+			if (
+				await swal({
+					text: 'Are you sure you want to delete this category?',
+					icon: 'warning',
+					buttons: ['Cancel', 'Confirm'],
+					dangerMode: true,
+				})
+			) {
+				await deleteCategory(row.id!);
+				toastr.info('Category deleted successfully.');
+				await refetch();
+			}
+		} catch (error) {
+			handleError(error);
+		}
+	};
 
 	return (
 		<View>
@@ -28,16 +52,28 @@ const List: FC<Props> = (props) => {
 				<Button
 					buttonSize='sm'
 					color='indigo'
-					className='ml-auto w-20 flex items-center justify-center'
+					className='ml-auto sm:w-20 flex items-center justify-center'
 					onClick={(e) => {
 						e.preventDefault();
 						refetch();
 					}}
 					disabled={isFetching}>
-					{isFetching ? <Spinner /> : 'Refresh'}
+					{isFetching ? (
+						<Spinner />
+					) : (
+						<>
+							<span className='hidden sm:block'>Refresh</span>
+							<span className='block sm:hidden'>
+								<i className='fas fa-sync'></i>
+							</span>
+						</>
+					)}
 				</Button>
-				<RouterLinkButton to={url('add')} buttonSize='sm' color='green' className='ml-1'>
-					+ Add Category
+				<RouterLinkButton to={url('add')} buttonSize='sm' color='green' className='ml-1 flex items-center justify-center'>
+					<span className='hidden sm:block'>+ Add Category</span>
+					<span className='block sm:hidden'>
+						<i className='fas fa-plus'></i>
+					</span>
 				</RouterLinkButton>
 			</Head>
 			<Body>
@@ -53,7 +89,7 @@ const List: FC<Props> = (props) => {
 						{
 							name: 'Image',
 							cell: (row) => {
-								const url = row.picture?.url || 'https://via.placeholder.com/200';
+								const url = row.picture?.url ? urlWithToken(row.picture.url, token!) : 'https://via.placeholder.com/200';
 								return (
 									<ImageModal
 										small={url}
@@ -95,7 +131,15 @@ const List: FC<Props> = (props) => {
 											edit
 										</i>
 									</RouterLinkButton>
-									<Button buttonSize='sm' color='red' className='mx-1 h-8 w-8 flex justify-center' data-tip='Delete'>
+									<Button
+										buttonSize='sm'
+										color='red'
+										className='mx-1 h-8 w-8 flex justify-center'
+										data-tip='Delete'
+										onClick={(e) => {
+											e.preventDefault();
+											remove(row);
+										}}>
 										<i className='material-icons' style={{ fontSize: '13px' }}>
 											delete
 										</i>

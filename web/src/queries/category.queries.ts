@@ -24,9 +24,16 @@ export async function createCategory(payload: Partial<CategoryInterface> | FormD
 }
 
 export async function updateCategory(id: number | string, payload: Partial<CategoryInterface> | FormData) {
+	if (payload instanceof FormData) {
+		payload.set('_method', 'PUT');
+	}
+
 	const {
 		data: { data },
-	} = await axios.put<{ data: CategoryInterface }>(route('v1.categories.update', { category: id }), payload);
+	} = await axios.post<{ data: CategoryInterface }>(
+		route('v1.categories.update', { category: id }),
+		payload instanceof FormData ? payload : { ...payload, _method: 'PUT' }
+	);
 	return data;
 }
 

@@ -13,6 +13,8 @@ import Label from '../../../components/Forms/Label';
 import { CategoryInterface } from '../../../interfaces/category.interface';
 import { handleError } from '../../../helpers';
 import { createCategory, getCategory, updateCategory } from '../../../queries/category.queries';
+import Spinner from '../../../components/Spinner';
+import HiddenFile from '../../../components/Forms/HiddenFile';
 
 type Props = {};
 
@@ -121,15 +123,13 @@ const Form: FC<Props> = (props) => {
 									}
 								}}
 							/>
-							<input
+							<HiddenFile
 								ref={fileRef}
-								type='file'
 								name='picture'
 								id='picture'
-								className='hidden'
-								onChange={(e) => {
-									if (e.target.files && e.target.files.length > 0 && !processing) {
-										const file = e.target.files[0];
+								onUpload={(files) => {
+									if (files.length > 0 && !processing) {
+										const file = files[0];
 										fileReader.readAsDataURL(file);
 										setPicture(file);
 									}
@@ -144,6 +144,12 @@ const Form: FC<Props> = (props) => {
 						<Group className='md:w-1/2'>
 							<Label htmlFor='name'>Name</Label>
 							<Input {...register('name')} type='text' placeholder='Name' inputSize='sm' disabled={processing} />
+						</Group>
+						<Group>
+							<Button type='submit' buttonSize='sm' className='mt-0 sm:mt-4' disabled={processing}>
+								{processing ? <Spinner className='mr-2' /> : null}
+								Save
+							</Button>
 						</Group>
 					</FormBody>
 				</form>

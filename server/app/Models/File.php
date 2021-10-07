@@ -22,7 +22,7 @@ class File extends Model
 
     public function getUriAttribute()
     {
-        return route('v1.files.show', ['file' => $this->id]);
+        return url(Storage::url($this->url));
     }
 
     protected static function booted()

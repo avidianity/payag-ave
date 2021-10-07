@@ -30,11 +30,11 @@ class FileTest extends TestCase
         $file = File::process(UploadedFile::fake()->image('photo.jpg'));
         $file->save();
 
-        Storage::assertExists($file->url);
-
         $this->get(route('v1.files.show', ['file' => $file->id]))
             ->assertHeader('Content-Type', $file->type)
             ->assertHeader('Content-Length', $file->size);
+
+        Storage::assertExists($file->url);
     }
 
     /**
