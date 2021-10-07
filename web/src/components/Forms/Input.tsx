@@ -9,6 +9,7 @@ const Input = forwardRef<HTMLInputElement, Props>(({ inputSize, ...props }, ref)
 		sm: 'h-10',
 		md: 'h-12',
 	}[inputSize || 'md'];
+
 	return (
 		<input
 			ref={ref}

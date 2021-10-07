@@ -1,5 +1,5 @@
 import React, { FC, RefAttributes } from 'react';
-import { Link as RouterLink, LinkProps } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import { LocationState } from 'history';
 
 type Props = LinkProps<LocationState> &
@@ -8,7 +8,7 @@ type Props = LinkProps<LocationState> &
 		color?: 'gray' | 'red' | 'yellow' | 'green' | 'blue' | 'indigo' | 'purple' | 'pink';
 	};
 
-const RouterLinkButton: FC<Props> = ({ buttonSize, color, ...props }) => {
+const RouterLinkButton: FC<Props> = ({ buttonSize, color, children, ...props }) => {
 	const [h, px] = {
 		sm: ['py-1', 'px-3'],
 		md: ['py-2', 'px-4'],
@@ -17,13 +17,13 @@ const RouterLinkButton: FC<Props> = ({ buttonSize, color, ...props }) => {
 	}[buttonSize || 'md'];
 
 	return (
-		<RouterLink
+		<Link
 			{...props}
 			className={`flex items-center ${h} rounded-lg bg-${color || 'blue'}-600 text-white ${px} hover:bg-${color || 'blue'}-700 ${
 				props.className || ''
 			} disabled:opacity-70`}>
-			{props.children}
-		</RouterLink>
+			{children}
+		</Link>
 	);
 };
 

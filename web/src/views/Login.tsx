@@ -16,7 +16,6 @@ import { useHistory } from 'react-router';
 import Spinner from '../components/Spinner';
 import axios from 'axios';
 import { getUserMainPage, handleError, route } from '../helpers';
-import { LoginResponse } from '../responses/login.response';
 import { useGlobalState } from '../hooks';
 import { AuthContext } from '../contexts/auth.context';
 
@@ -38,7 +37,10 @@ const Login: FC<Props> = (props) => {
 		try {
 			const {
 				data: { user, token },
-			} = await axios.post<LoginResponse>(route('v1.auth.login'), payload);
+			} = await axios.post<{
+				token: string;
+				user: UserInterface;
+			}>(route('v1.auth.login'), payload);
 
 			if (payload.remember_me) {
 				state.set('token', token);

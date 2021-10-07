@@ -86,16 +86,6 @@ const List: FC<Props> = (props) => {
 							cell: (row) => (
 								<div className='flex items-center'>
 									<RouterLinkButton
-										to={url(`${row.id}/view`)}
-										buttonSize='sm'
-										color='blue'
-										className='mx-1 h-8 w-8 flex justify-center'
-										data-tip='View'>
-										<i className='material-icons' style={{ fontSize: '13px' }}>
-											visibility
-										</i>
-									</RouterLinkButton>
-									<RouterLinkButton
 										to={url(`${row.id}/edit`)}
 										buttonSize='sm'
 										color='yellow'
