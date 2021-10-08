@@ -28,8 +28,8 @@ class Order extends Model
 
     protected static function booted()
     {
-        static::deleting(function (self $product) {
-            $product->products->each->delete();
+        static::deleting(function (self $order) {
+            $order->products()->detach();
         });
     }
 

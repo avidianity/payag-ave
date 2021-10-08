@@ -25,7 +25,7 @@ class Product extends Model
     protected static function booted()
     {
         static::deleting(function (self $product) {
-            $product->orders->each->delete();
+            $product->orders()->detach();
             optional($product->picture)->delete();
         });
     }

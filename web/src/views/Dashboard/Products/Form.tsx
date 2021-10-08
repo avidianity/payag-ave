@@ -10,16 +10,19 @@ import FormBody from '../../../components/Forms/Body';
 import Group from '../../../components/Forms/Group';
 import Input from '../../../components/Forms/Input';
 import Label from '../../../components/Forms/Label';
-import { CategoryInterface } from '../../../interfaces/category.interface';
+import { ProductInterface } from '../../../interfaces/product.interface';
 import { handleError } from '../../../helpers';
-import { createCategory, getCategory, updateCategory } from '../../../queries/category.queries';
+import { createProduct, getProduct, updateProduct } from '../../../queries/product.queries';
 import Spinner from '../../../components/Spinner';
 import HiddenFile from '../../../components/Forms/HiddenFile';
+import { useQuery } from 'react-query';
+import { getCategories } from '../../../queries/category.queries';
+import Select from '../../../components/Forms/Select';
 import { FormData } from '../../../libraries/FormData.library';
 
 type Props = {};
 
-type Inputs = Pick<CategoryInterface, 'code' | 'name'>;
+type Inputs = Pick<ProductInterface, 'code' | 'name' | 'category_id' | 'cost' | 'price' | 'quantity'>;
 
 const Form: FC<Props> = (props) => {
 	const [processing, setProcessing] = useToggle(false);
@@ -30,6 +33,7 @@ const Form: FC<Props> = (props) => {
 	const fileRef = useRef<HTMLInputElement>(null);
 	const { register, handleSubmit, reset, setValue } = useForm<Inputs>();
 	const [picture, setPicture] = useNullable<File>();
+	const { data: categories } = useQuery('categories', getCategories);
 
 	const fileReader = new FileReader();
 
@@ -39,17 +43,21 @@ const Form: FC<Props> = (props) => {
 		}
 	});
 
-	const fetchCategory = async () => {
+	const fetchProduct = async () => {
 		setProcessing(true);
 		try {
-			const category = await getCategory(match.params.id);
+			const product = await getProduct(match.params.id);
 
-			if (category.picture) {
-				setPreview(category.picture.url);
+			if (product.picture) {
+				setPreview(product.picture.url);
 			}
 
-			setValue('code', category.code);
-			setValue('name', category.name);
+			setValue('code', product.code);
+			setValue('name', product.name);
+			setValue('category_id', product.category_id);
+			setValue('cost', product.cost);
+			setValue('price', product.price);
+			setValue('quantity', product.quantity);
 			setMode('Edit');
 		} catch (error) {
 			handleError(error);
@@ -68,14 +76,14 @@ const Form: FC<Props> = (props) => {
 				payload.set('picture', picture);
 			}
 
-			await (mode === 'Add' ? createCategory(payload) : updateCategory(match.params.id, payload));
+			await (mode === 'Add' ? createProduct(payload) : updateProduct(match.params.id, payload));
 
 			if (mode === 'Add') {
 				reset();
 				setPicture(null);
 			}
 
-			toastr.success(`${mode} Category successful.`);
+			toastr.success(`${mode} Product successful.`);
 		} catch (error) {
 			handleError(error);
 		} finally {
@@ -85,7 +93,7 @@ const Form: FC<Props> = (props) => {
 
 	useEffect(() => {
 		if (match.path.includes('edit')) {
-			fetchCategory();
+			fetchProduct();
 		}
 		// eslint-disable-next-line
 	}, []);
@@ -93,7 +101,7 @@ const Form: FC<Props> = (props) => {
 	return (
 		<View>
 			<ViewHead>
-				<h3>{mode} Category</h3>
+				<h3>{mode} Product</h3>
 				<Button
 					buttonSize='sm'
 					color='indigo'
@@ -112,7 +120,7 @@ const Form: FC<Props> = (props) => {
 							<Label htmlFor='picture'>Picture</Label>
 							<img
 								src={preview || 'https://via.placeholder.com/200'}
-								alt='Category Thumbnail'
+								alt='Product Thumbnail'
 								className={`rounded-full h-52 w-52 shadow-lg mx-auto ${!processing ? 'cursor-pointer' : ''}`}
 								onClick={(e) => {
 									e.preventDefault();
@@ -135,13 +143,39 @@ const Form: FC<Props> = (props) => {
 								disabled={processing}
 							/>
 						</Group>
-						<Group className='md:w-1/2'>
+						<Group className='md:w-1/3'>
 							<Label htmlFor='code'>Code</Label>
 							<Input {...register('code')} type='text' placeholder='Code' inputSize='sm' disabled={processing} />
 						</Group>
-						<Group className='md:w-1/2'>
+						<Group className='md:w-1/3'>
 							<Label htmlFor='name'>Name</Label>
 							<Input {...register('name')} type='text' placeholder='Name' inputSize='sm' disabled={processing} />
+						</Group>
+						<Group className='md:w-1/3'>
+							<Label htmlFor='category_id'>Category</Label>
+							<Select {...register('category_id')} inputSize='sm' disabled={processing}>
+								<option selected disabled>
+									{' '}
+									-- Select --{' '}
+								</option>
+								{categories?.map((category, index) => (
+									<option value={category.id} key={index}>
+										{category.name}
+									</option>
+								))}
+							</Select>
+						</Group>
+						<Group className='md:w-1/3'>
+							<Label htmlFor='cost'>Cost</Label>
+							<Input {...register('cost')} type='number' placeholder='Cost' inputSize='sm' disabled={processing} />
+						</Group>
+						<Group className='md:w-1/3'>
+							<Label htmlFor='price'>Price</Label>
+							<Input {...register('price')} type='number' placeholder='Price' inputSize='sm' disabled={processing} />
+						</Group>
+						<Group className='md:w-1/3'>
+							<Label htmlFor='quantity'>Quantity</Label>
+							<Input {...register('quantity')} type='number' placeholder='Quantity' inputSize='sm' disabled={processing} />
 						</Group>
 						<Group>
 							<Button type='submit' buttonSize='sm' className='mt-0 sm:mt-4' disabled={processing}>
