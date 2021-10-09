@@ -12,6 +12,10 @@ export function getUserMainPage(user: UserInterface) {
 	return user.role === UserRoles.CUSTOMER ? mainRoutes.HOME : mainRoutes.DASHBOARD;
 }
 
+export function formatNumber(number: number) {
+	return Number.isInteger(number) ? number : number.toFixed(2);
+}
+
 export function handleError(error: any, useHandle = true) {
 	if (error) {
 		if (error.response) {

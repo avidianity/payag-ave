@@ -55,6 +55,6 @@ class Sanctum extends Guard
             return $token;
         }
 
-        return $request->get('token');
+        return $request->input('token');
     }
 }

@@ -9,7 +9,7 @@
 	"dependencies": {
 		"@avidian/events": "^1.0.3",
 		"@avidian/extras": "^1.0.1",
-		"@avidian/hooks": "^1.0.3",
+		"@avidian/hooks": "^1.0.5",
 		"@avidian/react-modal-image": "^2.5.2",
 		"@avidian/state": "^1.2.9",
 		"@fontsource/lato": "^4.5.0",

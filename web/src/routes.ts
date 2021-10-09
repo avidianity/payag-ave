@@ -8,6 +8,7 @@ export const routes = {
 	PURCHASES: '/purchases',
 	PEOPLE: '/people',
 	SALE: '/sale',
+	ORDERS: '/orders',
 	PROFILE: '/profile',
 	SETTINGS: '/settings',
 	LOGOUT: '/logout',

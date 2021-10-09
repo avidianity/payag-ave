@@ -20,7 +20,7 @@ class UpdateOrderRequest extends FormRequest
         /**
          * @var \App\Models\Order
          */
-        $order = $this->routeModel('order', Order::class);
+        $order = $this->routeModel('order', Order::class, new Order());
 
         /**
          * @var \App\Models\User

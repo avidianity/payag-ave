@@ -9,6 +9,7 @@ import { useGlobalState } from '../../hooks';
 import { UserRoles } from '../../interfaces/user.interface';
 import { routes } from '../../routes';
 import Categories from './Categories';
+import Orders from './Orders';
 import Products from './Products';
 
 type Props = {};
@@ -27,6 +28,10 @@ const Dashboard: FC<Props> = (props) => {
 		{
 			path: url(routes.PRODUCTS),
 			component: Products,
+		},
+		{
+			path: url(routes.ORDERS),
+			component: Orders,
 		},
 	];
 

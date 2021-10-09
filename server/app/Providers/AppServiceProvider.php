@@ -40,7 +40,13 @@ class AppServiceProvider extends ServiceProvider
                 return $route;
             }
 
-            return $class::findOrFail($route);
+            $model = $class::find($route);
+
+            if (!$model) {
+                return $default;
+            }
+
+            return $model;
         });
     }
 }

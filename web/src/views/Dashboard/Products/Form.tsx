@@ -54,10 +54,14 @@ const Form: FC<Props> = (props) => {
 
 			setValue('code', product.code);
 			setValue('name', product.name);
-			setValue('category_id', product.category_id);
 			setValue('cost', product.cost);
 			setValue('price', product.price);
 			setValue('quantity', product.quantity);
+
+			if (product.category) {
+				setValue('category_id', product.category.id!);
+			}
+
 			setMode('Edit');
 		} catch (error) {
 			handleError(error);
