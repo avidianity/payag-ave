@@ -33,6 +33,7 @@ class StoreOrderRequest extends FormRequest
             'status' => ['required', 'string', Rule::in(Order::STATUSES)],
             'products' => ['required', 'array', 'min:1'],
             'products.*.id' => ['required', 'numeric', Rule::exists(Product::class, 'id')],
+            'products.*.quantity' => ['required', 'numeric', 'min:1'],
         ];
     }
 }

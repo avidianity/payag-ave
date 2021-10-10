@@ -1,5 +1,5 @@
 import { useMode, useNullable, useToggle } from '@avidian/hooks';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useForm } from 'react-hook-form';
 import Button from '../../../components/Buttons/Button';
@@ -19,10 +19,11 @@ import { useQuery } from 'react-query';
 import { getCategories } from '../../../queries/category.queries';
 import Select from '../../../components/Forms/Select';
 import { FormData } from '../../../libraries/FormData.library';
+import Editor from '../../../components/Editor';
 
 type Props = {};
 
-type Inputs = Pick<ProductInterface, 'code' | 'name' | 'category_id' | 'cost' | 'price' | 'quantity'>;
+type Inputs = Pick<ProductInterface, 'code' | 'name' | 'description' | 'category_id' | 'cost' | 'price' | 'quantity'>;
 
 const Form: FC<Props> = (props) => {
 	const [processing, setProcessing] = useToggle(false);
@@ -34,6 +35,7 @@ const Form: FC<Props> = (props) => {
 	const { register, handleSubmit, reset, setValue } = useForm<Inputs>();
 	const [picture, setPicture] = useNullable<File>();
 	const { data: categories } = useQuery('categories', getCategories);
+	const [description, setDescription] = useState('');
 
 	const fileReader = new FileReader();
 
@@ -58,6 +60,10 @@ const Form: FC<Props> = (props) => {
 			setValue('price', product.price);
 			setValue('quantity', product.quantity);
 
+			if (product.description) {
+				setDescription(product.description);
+			}
+
 			if (product.category) {
 				setValue('category_id', product.category.id!);
 			}
@@ -76,6 +82,10 @@ const Form: FC<Props> = (props) => {
 		try {
 			const payload = new FormData(data);
 
+			if (description.length > 0) {
+				payload.set('description', description);
+			}
+
 			if (picture) {
 				payload.set('picture', picture);
 			}
@@ -85,10 +95,12 @@ const Form: FC<Props> = (props) => {
 			if (mode === 'Add') {
 				reset();
 				setPicture(null);
+				setDescription('');
 			}
 
 			toastr.success(`${mode} Product successful.`);
 		} catch (error) {
+			console.log(error);
 			handleError(error);
 		} finally {
 			setProcessing(false);
@@ -180,6 +192,10 @@ const Form: FC<Props> = (props) => {
 						<Group className='md:w-1/3'>
 							<Label htmlFor='quantity'>Quantity</Label>
 							<Input {...register('quantity')} type='number' placeholder='Quantity' inputSize='sm' disabled={processing} />
+						</Group>
+						<Group>
+							<Label htmlFor='description'>Description</Label>
+							<Editor onChange={setDescription} value={description} />
 						</Group>
 						<Group>
 							<Button type='submit' buttonSize='sm' className='mt-0 sm:mt-4' disabled={processing}>

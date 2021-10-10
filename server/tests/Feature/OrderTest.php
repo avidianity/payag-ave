@@ -89,7 +89,7 @@ class OrderTest extends TestCase
             'paid' => $this->faker->numberBetween(1, 1000),
             'status' => Arr::random(Order::STATUSES),
             'products' => [
-                ['id' => $product->id],
+                ['id' => $product->id, 'quantity' => $this->faker->numberBetween(1, 20)],
             ],
         ];
 
@@ -136,7 +136,7 @@ class OrderTest extends TestCase
             'paid' => $this->faker->numberBetween(1, 1000),
             'status' => Arr::random(Order::STATUSES),
             'products' => [
-                ['id' => $product->id],
+                ['id' => $product->id, 'quantity' => $this->faker->numberBetween(1, 20)],
             ],
         ];
 
@@ -165,7 +165,7 @@ class OrderTest extends TestCase
         /**
          * @var \App\Models\Order
          */
-        $order = Order::factory()->create();
+        $order = Order::factory()->create(['status' => Order::UNPAID]);
 
         $this->delete(route('v1.orders.destroy', ['order' => $order->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();

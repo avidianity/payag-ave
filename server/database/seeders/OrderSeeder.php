@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 
@@ -17,10 +18,14 @@ class OrderSeeder extends Seeder
     {
         Order::factory()
             ->count(50)
-            ->hasAttached(
-                Product::factory()
-                    ->forCategory()
-                    ->count(5)
+            ->has(
+                OrderItem::factory()
+                    ->count(20)
+                    ->for(
+                        Product::factory()
+                            ->forCategory()
+                    ),
+                'items'
             )
             ->create();
     }

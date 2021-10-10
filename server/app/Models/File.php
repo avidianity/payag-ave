@@ -18,17 +18,28 @@ class File extends Model
 
     protected $hidden = ['url'];
 
-    protected $appends = ['uri'];
-
-    public function getUriAttribute()
-    {
-        return url(Storage::url($this->url));
-    }
-
     protected static function booted()
     {
+        static::creating(function (self $file) {
+            $driver =  config('filesystems.default');
+
+            $local = $driver === 'local' || $driver === 'public';
+
+            if (Storage::exists($file->url)) {
+                if ($local) {
+                    $file->uri = url(Storage::url($file->url));
+                } else {
+                    $file->uri = Storage::url($file->url);
+                }
+            } else {
+                $file->uri = $file->url;
+            }
+        });
+
         static::deleting(function ($file) {
-            Storage::delete($file->url);
+            if (Storage::exists($file->url)) {
+                Storage::delete($file->url);
+            }
         });
     }
 

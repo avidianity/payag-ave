@@ -18,6 +18,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name')->index();
             $table->string('code')->unique();
+            $table->text('description')->nullable();
             $table->unsignedDecimal('price')->index();
             $table->unsignedDecimal('cost')->index();
             $table->unsignedBigInteger('quantity')->index();

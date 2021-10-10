@@ -19,7 +19,7 @@ class UpdateSelfOrderRequest extends FormRequest
         /**
          * @var \App\Models\Order
          */
-        $order = $this->routeModel('order', Order::class, new Order());
+        $order = $this->routeModel('order', Order::class);
 
         if ($order->status !== Order::UNPAID) {
             return false;
@@ -38,6 +38,7 @@ class UpdateSelfOrderRequest extends FormRequest
         return [
             'products' => ['required', 'array', 'min:1'],
             'products.*.id' => ['required', 'numeric', Rule::exists(Product::class, 'id')],
+            'products.*.quantity' => ['required', 'numeric', 'min:1'],
         ];
     }
 }

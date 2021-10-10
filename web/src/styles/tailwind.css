@@ -35,3 +35,27 @@
 .navlink-active .navlink-text {
 	@apply text-gray-900;
 }
+
+.z-1005 {
+	z-index: 1005;
+}
+
+.z-1055 {
+	z-index: 1055;
+}
+
+.outline-0 {
+	outline: 0;
+}
+
+.max-h-150 {
+	max-height: 37.5rem;
+}
+
+.h-180 {
+	height: 45rem;
+}
+
+.\-mt-180 {
+	margin-top: -45rem;
+}

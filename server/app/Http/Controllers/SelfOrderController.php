@@ -6,6 +6,7 @@ use App\Http\Requests\StoreSelfOrderRequest;
 use App\Http\Requests\UpdateSelfOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,7 @@ class SelfOrderController extends Controller
         return OrderResource::collection(
             $request->user()
                 ->ordersAsCustomer()
-                ->with('products', 'biller')
+                ->with('items', 'biller')
                 ->get()
         );
     }
@@ -41,11 +42,15 @@ class SelfOrderController extends Controller
         $data['customer_id'] = $request->user()->id;
         $data['status'] = Order::UNPAID;
 
-        $products = Product::findMany(collect($data['products'])->map->id);
-
         $order = Order::create($data);
 
-        $order->products()->attach($products);
+        $items = Product::findMany(collect($data['products'])->map->id)
+            ->map(function (Product $product, $index) use ($data) {
+                $quantity = $data['products'][$index]['quantity'];
+                return new OrderItem(['product_id' => $product->id, 'quantity' => $quantity]);
+            });
+
+        $order->items()->saveMany($items);
 
         return new OrderResource($order);
     }
@@ -61,7 +66,7 @@ class SelfOrderController extends Controller
         return new OrderResource(
             $request->user()
                 ->ordersAsCustomer()
-                ->with('products', 'customer', 'biller')
+                ->with('items.product', 'customer', 'biller')
                 ->findOrFail($id)
         );
     }
@@ -82,14 +87,20 @@ class SelfOrderController extends Controller
          */
         $order = $request->user()
             ->ordersAsCustomer()
-            ->with('products', 'customer', 'biller')
+            ->with('items.product', 'customer', 'biller')
             ->findOrFail($id);
-
-        $products = Product::findMany(collect($data['products'])->map->id);
 
         $order->update($data);
 
-        $order->products()->sync($products);
+        $order->items->each->delete();
+
+        $items = Product::findMany(collect($data['products'])->map->id)
+            ->map(function (Product $product, $index) use ($data) {
+                $quantity = $data['products'][$index]['quantity'];
+                return new OrderItem(['product_id' => $product->id, 'quantity' => $quantity]);
+            });
+
+        $order->items()->saveMany($items);
 
         return new OrderResource($order);
     }
@@ -107,7 +118,7 @@ class SelfOrderController extends Controller
          */
         $order = $request->user()
             ->ordersAsCustomer()
-            ->with('products', 'customer', 'biller')
+            ->with('items.product', 'customer', 'biller')
             ->where('status', Order::UNPAID)
             ->findOrFail($id);
 

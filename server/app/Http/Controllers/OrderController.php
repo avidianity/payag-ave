@@ -6,7 +6,9 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class OrderController extends Controller
 {
@@ -18,7 +20,7 @@ class OrderController extends Controller
     public function index()
     {
         return OrderResource::collection(Order::with([
-            'products', 'customer', 'biller'
+            'items.product', 'customer', 'biller'
         ])->get());
     }
 
@@ -32,13 +34,17 @@ class OrderController extends Controller
     {
         $data = $request->validated();
 
-        $products = Product::findMany(collect($data['products'])->map->id);
-
         $data['biller_id'] = $request->user()->id;
 
         $order = Order::create($data);
 
-        $order->products()->attach($products);
+        $items = Product::findMany(collect($data['products'])->map->id)
+            ->map(function (Product $product, $index) use ($data) {
+                $quantity = $data['products'][$index]['quantity'];
+                return new OrderItem(['product_id' => $product->id, 'quantity' => $quantity]);
+            });
+
+        $order->items()->saveMany($items);
 
         return new OrderResource($order);
     }
@@ -52,7 +58,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load([
-            'products', 'customer', 'biller',
+            'items.product', 'customer', 'biller',
         ]);
 
         return new OrderResource($order);
@@ -69,11 +75,17 @@ class OrderController extends Controller
     {
         $data = $request->validated();
 
-        $products = Product::findMany(collect($data['products'])->map->id);
-
         $order->update($data);
 
-        $order->products()->sync($products);
+        $order->items->each->delete();
+
+        $items = Product::findMany(collect($data['products'])->map->id)
+            ->map(function (Product $product, $index) use ($data) {
+                $quantity = $data['products'][$index]['quantity'];
+                return new OrderItem(['product_id' => $product->id, 'quantity' => $quantity]);
+            });
+
+        $order->items()->saveMany($items);
 
         return new OrderResource($order);
     }
@@ -86,6 +98,13 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        if ($order->status !== Order::UNPAID) {
+            throw (new ModelNotFoundException)->setModel(
+                $order,
+                $order->id,
+            );
+        }
+
         $order->delete();
 
         return response('', 204);

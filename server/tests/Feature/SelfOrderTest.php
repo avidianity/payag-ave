@@ -80,7 +80,7 @@ class SelfOrderTest extends TestCase
 
         $data = [
             'products' => [
-                ['id' => $product->id],
+                ['id' => $product->id, 'quantity' => $this->faker->numberBetween(1, 20)],
             ],
         ];
 
@@ -123,7 +123,7 @@ class SelfOrderTest extends TestCase
 
         $data = [
             'products' => [
-                ['id' => $product->id],
+                ['id' => $product->id, 'quantity' => $this->faker->numberBetween(1, 20)],
             ],
         ];
 

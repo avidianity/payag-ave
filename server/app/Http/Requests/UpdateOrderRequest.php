@@ -20,7 +20,7 @@ class UpdateOrderRequest extends FormRequest
         /**
          * @var \App\Models\Order
          */
-        $order = $this->routeModel('order', Order::class, new Order());
+        $order = $this->routeModel('order', Order::class);
 
         /**
          * @var \App\Models\User
@@ -47,6 +47,7 @@ class UpdateOrderRequest extends FormRequest
             'status' => ['nullable', 'string', Rule::in(Order::STATUSES)],
             'products' => ['required', 'array', 'min:1'],
             'products.*.id' => ['required', 'numeric', Rule::exists(Product::class, 'id')],
+            'products.*.quantity' => ['required', 'numeric', 'min:1'],
         ];
     }
 }

@@ -29,6 +29,7 @@ class StoreProductRequest extends FormRequest
         return [
             'code' => ['required', 'string', Rule::unique(Product::class)],
             'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric'],
             'cost' => ['required', 'numeric'],
             'quantity' => ['required', 'numeric'],

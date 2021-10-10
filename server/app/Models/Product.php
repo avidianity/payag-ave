@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\DOMService;
 use App\Traits\HasFile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ class Product extends Model
     protected $fillable = [
         'code',
         'name',
+        'description',
         'price',
         'cost',
         'quantity',
@@ -25,9 +27,14 @@ class Product extends Model
     protected static function booted()
     {
         static::deleting(function (self $product) {
-            $product->orders()->detach();
             optional($product->picture)->delete();
+            $product->items->each->delete();
         });
+    }
+
+    public function setDescriptionAttribute($description)
+    {
+        $this->attributes['description'] = app(DOMService::class)->clean($description);
     }
 
     public function category()
@@ -35,10 +42,8 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function orders()
+    public function items()
     {
-        return $this->belongsToMany(Order::class)
-            ->withTimestamps()
-            ->using(OrderProduct::class);
+        return $this->hasMany(OrderItem::class);
     }
 }

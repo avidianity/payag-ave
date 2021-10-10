@@ -11,8 +11,7 @@ module.exports = {
 	variants: {
 		extend: {
 			opacity: ['disabled'],
-			borderWidth: ['first'],
-			margin: ['first'],
+			borderWidth: ['first', 'last'],
 		},
 	},
 	plugins: [require('@tailwindcss/forms')],

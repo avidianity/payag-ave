@@ -30,8 +30,9 @@ class UpdateProductRequest extends FormRequest
             'code' => [
                 'nullable',
                 'string',
-                Rule::unique(Product::class)->ignoreModel($this->routeModel('product', Product::class, new Product()))
+                Rule::unique(Product::class)->ignoreModel($this->routeModel('product', Product::class))
             ],
+            'description' => ['nullable', 'string'],
             'name' => ['nullable', 'string', 'max:255'],
             'price' => ['nullable', 'numeric'],
             'cost' => ['nullable', 'numeric'],

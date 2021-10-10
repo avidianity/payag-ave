@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-class OrderResource extends JsonResource
+class OrderItemResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,12 +14,9 @@ class OrderResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'paid' => $this->paid,
-            'status' => $this->status,
-            'customer' => new UserResource($this->whenLoaded('customer')),
-            'biller' => new UserResource($this->whenLoaded('biller')),
-            'products' => ProductResource::collection($this->whenLoaded('products')),
-            'items' => OrderItemResource::collection($this->whenLoaded('items')),
+            'category' => new CategoryResource($this->whenLoaded('category')),
+            'product' => new ProductResource($this->whenLoaded('product')),
+            'quantity' => $this->quantity,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

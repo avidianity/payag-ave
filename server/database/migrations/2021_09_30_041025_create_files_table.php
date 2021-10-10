@@ -18,6 +18,7 @@ class CreateFilesTable extends Migration
             $table->string('type')->index();
             $table->string('name')->index();
             $table->string('url');
+            $table->string('uri');
             $table->unsignedBigInteger('size');
             $table->unsignedBigInteger('fileable_id')
                 ->nullable()

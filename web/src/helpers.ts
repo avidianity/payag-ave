@@ -8,12 +8,19 @@ let networkHandle: number | null = null;
 let authHandle: number | null = null;
 
 export function getUserMainPage(user: UserInterface) {
-	console.log(user);
 	return user.role === UserRoles.CUSTOMER ? mainRoutes.HOME : mainRoutes.DASHBOARD;
 }
 
 export function formatNumber(number: number) {
 	return Number.isInteger(number) ? number : number.toFixed(2);
+}
+
+export function fulltextSearch<T>(items: T[], key: keyof T, text: string) {
+	return items.filter((item) => {
+		return text.split(' ').every((element) => {
+			return String(item[key]).toLowerCase().indexOf(element.toLowerCase()) > -1;
+		});
+	});
 }
 
 export function handleError(error: any, useHandle = true) {
@@ -75,11 +82,15 @@ export function handleError(error: any, useHandle = true) {
 }
 
 export function urlWithToken(url: string, token: string) {
-	const uri = new URL(url);
+	try {
+		const uri = new URL(url);
 
-	uri.searchParams.set('token', token);
+		uri.searchParams.set('token', token);
 
-	return uri.toString();
+		return uri.toString();
+	} catch (_) {
+		return url;
+	}
 }
 
 export function route(name: keyof typeof routes, parameters?: Record<string, any>) {

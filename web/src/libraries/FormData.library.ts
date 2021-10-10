@@ -14,12 +14,4 @@ export class FormData extends window.FormData {
 			super();
 		}
 	}
-
-	append(name: string, value: any, fileName?: string | undefined) {
-		super.append(name, value, fileName);
-	}
-
-	set(name: string, value: any, fileName?: string | undefined) {
-		super.set(name, value, fileName);
-	}
 }

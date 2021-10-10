@@ -29,15 +29,8 @@ class Order extends Model
     protected static function booted()
     {
         static::deleting(function (self $order) {
-            $order->products()->detach();
+            $order->items->each->delete();
         });
-    }
-
-    public function products()
-    {
-        return $this->belongsToMany(Product::class)
-            ->withTimestamps()
-            ->using(OrderProduct::class);
     }
 
     public function customer()
@@ -48,6 +41,11 @@ class Order extends Model
     public function biller()
     {
         return $this->belongsTo(User::class, 'biller_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
     public function getIdentifier()

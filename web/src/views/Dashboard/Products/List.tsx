@@ -105,16 +105,19 @@ const List: FC<Props> = (props) => {
 							name: 'Name',
 							selector: (row) => row.name,
 							sortable: true,
+							minWidth: '200px',
 						},
 						{
 							name: 'Code',
 							selector: (row) => row.code,
 							sortable: true,
+							minWidth: '200px',
 						},
 						{
 							name: 'Category',
 							selector: (row) => row.category?.name,
 							sortable: true,
+							minWidth: '200px',
 						},
 						{
 							name: 'Price',
@@ -139,8 +142,21 @@ const List: FC<Props> = (props) => {
 						},
 						{
 							name: 'Actions',
+							minWidth: '150px',
 							cell: (row) => (
 								<div className='flex items-center'>
+									<Button
+										buttonSize='sm'
+										color='blue'
+										className='mx-1 h-8 w-8 flex justify-center'
+										data-tip='View'
+										onClick={(e) => {
+											e.preventDefault();
+										}}>
+										<i className='material-icons' style={{ fontSize: '13px' }}>
+											visibility
+										</i>
+									</Button>
 									<RouterLinkButton
 										to={url(`${row.id}/edit`)}
 										buttonSize='sm'

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\DOMService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -283,5 +284,38 @@ class ProductTest extends TestCase
             ->assertJsonStructure(['data']);
 
         Storage::assertExists($product->picture->fresh()->url);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_create_a_product_with_a_sanitized_description()
+    {
+        $html = <<<HTML
+<html>
+    <head>
+        <title>My Title</title>
+    </head>
+    <body>
+        <div>Hello World</div>
+        <script>console.log('Hello World! :)')</script>
+        <script>alert('Mwehehehe')</script>
+    </body>
+</html>
+HTML;
+
+        /**
+         * @var \App\Models\Category
+         */
+        $category = Category::factory()->create();
+
+        /**
+         * @var \App\Models\Product
+         */
+        $product = Product::factory()->create(['category_id' => $category->id, 'description' => $html]);
+
+        $service = app(DOMService::class);
+
+        $this->assertFalse($service->hasTag($product->description, 'script'));
     }
 }

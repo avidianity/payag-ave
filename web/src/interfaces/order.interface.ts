@@ -1,4 +1,5 @@
 import { ModelInterface } from './model.interface';
+import { OrderItemInterface } from './order-item.interface';
 import { ProductInterface } from './product.interface';
 import { UserInterface } from './user.interface';
 
@@ -15,5 +16,5 @@ export interface OrderInterface extends ModelInterface {
 	status: OrderStatuses;
 	customer?: UserInterface;
 	biller?: UserInterface;
-	products?: ProductInterface[];
+	items?: OrderItemInterface[];
 }

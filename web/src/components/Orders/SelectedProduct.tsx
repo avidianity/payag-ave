@@ -12,9 +12,7 @@ type Props = {
 const SelectedProduct: FC<Props> = ({ price, quantity, name, onSelect, active }) => {
 	return (
 		<div
-			className={`border first:mt-2 border-gray-300 px-4 py-2 border-t-0 first:border-t cursor-pointer ${
-				active ? 'bg-gray-200' : ''
-			}`}
+			className={`border border-gray-300 px-4 py-2 border-t-0 last:border-b-0 cursor-pointer ${active ? 'bg-gray-200' : ''}`}
 			onClick={(e) => {
 				e.preventDefault();
 				onSelect(active);
