@@ -208,5 +208,35 @@
 	"password.request": { "name": "password.request", "uri": "forgot-password", "method": "GET|HEAD", "middleware": ["web"] },
 	"login": { "name": "login", "uri": "login", "method": "GET|HEAD", "middleware": ["web"] },
 	"password.reset": { "name": "password.reset", "uri": "reset-password/{token}", "method": "GET|HEAD", "middleware": ["web"] },
-	"maintenance-mode": { "name": "maintenance-mode", "uri": "service-unavailable", "method": "GET|HEAD", "middleware": ["web"] }
+	"maintenance-mode": { "name": "maintenance-mode", "uri": "service-unavailable", "method": "GET|HEAD", "middleware": ["web"] },
+	"v1.purchases.store": {
+		"name": "v1.purchases.store",
+		"uri": "v1/purchases",
+		"method": "POST",
+		"middleware": ["api", "App\\Http\\Middleware\\Authenticate:sanctum", "App\\Http\\Middleware\\NonCustomerMiddleware"]
+	},
+	"v1.purchases.index": {
+		"name": "v1.purchases.index",
+		"uri": "v1/purchases",
+		"method": "GET|HEAD",
+		"middleware": ["api", "App\\Http\\Middleware\\Authenticate:sanctum", "App\\Http\\Middleware\\NonCustomerMiddleware"]
+	},
+	"v1.purchases.show": {
+		"name": "v1.purchases.show",
+		"uri": "v1/purchases/{purchase}",
+		"method": "GET",
+		"middleware": ["api", "App\\Http\\Middleware\\Authenticate:sanctum", "App\\Http\\Middleware\\NonCustomerMiddleware"]
+	},
+	"v1.purchases.update": {
+		"name": "v1.purchases.update",
+		"uri": "v1/purchases/{purchase}",
+		"method": "PUT|PATCH",
+		"middleware": ["api", "App\\Http\\Middleware\\Authenticate:sanctum", "App\\Http\\Middleware\\NonCustomerMiddleware"]
+	},
+	"v1.purchases.destroy": {
+		"name": "v1.purchases.destroy",
+		"uri": "v1/purchases/{purchase}",
+		"method": "DELETE",
+		"middleware": ["api", "App\\Http\\Middleware\\Authenticate:sanctum", "App\\Http\\Middleware\\NonCustomerMiddleware"]
+	}
 }

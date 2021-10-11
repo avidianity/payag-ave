@@ -11,6 +11,7 @@ import { routes } from '../../routes';
 import Categories from './Categories';
 import Orders from './Orders';
 import Products from './Products';
+import Purchases from './Purchases';
 
 type Props = {};
 
@@ -32,6 +33,10 @@ const Dashboard: FC<Props> = (props) => {
 		{
 			path: url(routes.ORDERS),
 			component: Orders,
+		},
+		{
+			path: url(routes.PURCHASES),
+			component: Purchases,
 		},
 	];
 

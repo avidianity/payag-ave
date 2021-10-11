@@ -1,7 +1,8 @@
 # For more information: https://laravel.com/docs/sail
 version: "3"
 services:
-    laravel.test:
+    payagave-server:
+        container_name: payagave-server
         build:
             context: ./vendor/laravel/sail/runtimes/8.0
             dockerfile: Dockerfile
@@ -20,7 +21,7 @@ services:
         volumes:
             - ".:/var/www/html"
         networks:
-            - sail
+            - payagave
         depends_on:
             - mysql
             - redis
@@ -37,9 +38,9 @@ services:
             MYSQL_PASSWORD: "${DB_PASSWORD}"
             MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         volumes:
-            - "sailmysql:/var/lib/mysql"
+            - "payagavemysql:/var/lib/mysql"
         networks:
-            - sail
+            - payagave
         healthcheck:
             test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
             retries: 3
@@ -49,9 +50,9 @@ services:
         ports:
             - "${FORWARD_REDIS_PORT:-6379}:6379"
         volumes:
-            - "sailredis:/data"
+            - "payagaveredis:/data"
         networks:
-            - sail
+            - payagave
         healthcheck:
             test: ["CMD", "redis-cli", "ping"]
             retries: 3
@@ -61,9 +62,9 @@ services:
         ports:
             - "${FORWARD_MEILISEARCH_PORT:-7700}:7700"
         volumes:
-            - "sailmeilisearch:/data.ms"
+            - "payagavemeilisearch:/data.ms"
         networks:
-            - sail
+            - payagave
         healthcheck:
             test:
                 [
@@ -81,14 +82,14 @@ services:
             - "${FORWARD_MAILHOG_PORT:-1025}:1025"
             - "${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025"
         networks:
-            - sail
+            - payagave
 networks:
-    sail:
+    payagave:
         driver: bridge
 volumes:
-    sailmysql:
+    payagavemysql:
         driver: local
-    sailredis:
+    payagaveredis:
         driver: local
-    sailmeilisearch:
+    payagavemeilisearch:
         driver: local

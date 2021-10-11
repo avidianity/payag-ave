@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryProductController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SelfOrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::apiResource('categories', CategoryController::class)->except('index', 'show');
         Route::apiResource('products', ProductController::class)->except('index', 'show');
         Route::apiResource('orders', OrderController::class);
+        Route::apiResource('purchases', PurchaseController::class);
     });
 
     /**

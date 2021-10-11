@@ -10,7 +10,7 @@ import Link from '../components/Link';
 import { routes } from '../routes';
 import logo from '../assets/logo-rounded.png';
 import { useForm } from 'react-hook-form';
-import { useToggle } from '@avidian/hooks';
+import { useArray, useToggle } from '@avidian/hooks';
 import { UserInterface } from '../interfaces/user.interface';
 import { useHistory } from 'react-router';
 import Spinner from '../components/Spinner';
@@ -31,6 +31,7 @@ const Login: FC<Props> = (props) => {
 	const history = useHistory();
 	const state = useGlobalState();
 	const { user, setUser, setToken } = useContext(AuthContext);
+	const [interceptors, setInterceptors] = useArray<number>();
 
 	const submit = async (payload: Inputs) => {
 		setProcessing(true);
@@ -45,6 +46,13 @@ const Login: FC<Props> = (props) => {
 			if (payload.remember_me) {
 				state.set('token', token);
 				state.set('user', user);
+			} else {
+				setInterceptors([
+					axios.interceptors.request.use((config) => {
+						config.headers.common['Authorization'] = `Bearer ${token}`;
+						return config;
+					}),
+				]);
 			}
 
 			setUser(user);
@@ -66,6 +74,10 @@ const Login: FC<Props> = (props) => {
 		if (user) {
 			history.push(getUserMainPage(user));
 		}
+
+		return () => {
+			interceptors.forEach((index) => axios.interceptors.request.eject(index));
+		};
 		// esline-disable-next-line
 	}, []);
 

@@ -29,6 +29,7 @@ class Product extends Model
         static::deleting(function (self $product) {
             optional($product->picture)->delete();
             $product->items->each->delete();
+            $product->purchases->each->delete();
         });
     }
 
@@ -45,5 +46,10 @@ class Product extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
     }
 }

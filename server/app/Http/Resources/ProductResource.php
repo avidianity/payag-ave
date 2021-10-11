@@ -24,6 +24,7 @@ class ProductResource extends JsonResource
             'orders' => OrderResource::collection($this->whenLoaded('orders')),
             'items' => OrderItemResource::collection($this->whenLoaded('items')),
             'picture' => new FileResource($this->whenLoaded('picture')),
+            'purchases' => PurchaseResource::collection($this->whenLoaded('purchases')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -16,7 +16,7 @@ class NonCustomerMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->user()->isCustomer()) {
+        if (!$request->user()->isStaff()) {
             return response(['message' => 'Unauthorized.'], 401);
         }
 

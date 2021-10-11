@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             $this->mergeWhen($this->resource->isAdmin(), [
                 'biller_orders' => OrderResource::collection($this->whenLoaded('ordersAsBiller')),
             ]),
+            'purchases' => PurchaseResource::collection($this->whenLoaded('purchases')),
             'picture' => new FileResource($this->whenLoaded('picture')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

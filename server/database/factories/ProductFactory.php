@@ -27,7 +27,7 @@ class ProductFactory extends Factory
             'price' => $this->faker->numberBetween(0, 1000),
             'cost' => $this->faker->numberBetween(0, 1000),
             'quantity' => $this->faker->numberBetween(0, 1000),
-            'description' => $this->faker->randomHtml(10, 7),
+            'description' => $this->faker->randomHtml(5, 5),
         ];
     }
 }

@@ -55,6 +55,11 @@ class User extends Authenticatable implements MustVerifyEmail
             $user->changeEmailRequests->each->delete();
             $user->ordersAsCustomer->each->delete();
             $user->ordersAsBiller->each->delete();
+
+            if ($user->isStaff()) {
+                $user->purchases->each->delete();
+            }
+
             optional($user->picture)->delete();
         });
     }
@@ -134,6 +139,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === static::EMPLOYEE;
     }
 
+    public function isStaff()
+    {
+        return !$this->isCustomer();
+    }
+
     public function ordersAsCustomer()
     {
         return $this->hasMany(Order::class, 'customer_id');
@@ -142,5 +152,13 @@ class User extends Authenticatable implements MustVerifyEmail
     public function ordersAsBiller()
     {
         return $this->hasMany(Order::class, 'biller_id');
+    }
+
+    public function purchases()
+    {
+        if ($this->role === static::CUSTOMER) {
+            throw new \RuntimeException('User is not a staff.');
+        }
+        return $this->hasMany(Purchase::class);
     }
 }
