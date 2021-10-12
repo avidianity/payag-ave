@@ -79,9 +79,6 @@ const Sidebar: FC<Props> = (props) => {
 					<Link title='Customers' to={url(routes.CUSTOMERS)} icon='user-friends'>
 						<span className='sidebar-link-text'>Customers</span>
 					</Link>
-					<Link title='Sale' to={url(routes.SALE)} icon='chart-pie'>
-						<span className='sidebar-link-text'>Sale</span>
-					</Link>
 				</div>
 			</div>
 		</div>
