@@ -12,6 +12,7 @@ import Categories from './Categories';
 import Orders from './Orders';
 import Products from './Products';
 import Purchases from './Purchases';
+import Users from './Users';
 
 type Props = {};
 
@@ -37,6 +38,14 @@ const Dashboard: FC<Props> = (props) => {
 		{
 			path: url(routes.PURCHASES),
 			component: Purchases,
+		},
+		{
+			path: url(routes.STAFF),
+			render: (props) => <Users {...props} roles={[UserRoles.ADMIN, UserRoles.EMPLOYEE]} />,
+		},
+		{
+			path: url(routes.CUSTOMERS),
+			render: (props) => <Users {...props} roles={[UserRoles.CUSTOMER]} />,
 		},
 	];
 

@@ -23,6 +23,10 @@ export function fulltextSearch<T>(items: T[], key: keyof T, text: string) {
 	});
 }
 
+export function getHTMLBody(html: string) {
+	return new DOMParser().parseFromString(html, 'text/html').body.innerHTML;
+}
+
 export function handleError(error: any, useHandle = true) {
 	if (error) {
 		if (error.response) {

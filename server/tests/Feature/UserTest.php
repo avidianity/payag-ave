@@ -107,9 +107,14 @@ class UserTest extends TestCase
         /**
          * @var \App\Models\User
          */
-        $user = User::factory()->create(['role' => User::ADMIN]);
+        $user = User::factory()->create();
 
-        $this->actingAs($user, 'sanctum');
+        /**
+         * @var \App\Models\User
+         */
+        $admin = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($admin, 'sanctum');
 
         $this->delete(route('v1.users.destroy', ['user' => $user->id]), [], ['Accept' => 'application/json'])
             ->assertNoContent();
@@ -180,7 +185,7 @@ class UserTest extends TestCase
     /**
      * @test
      */
-    public function it_should_return_a_collection_of_users_with_specific_roles()
+    public function it_should_return_a_collection_of_users_with_specific_role()
     {
         User::factory(15)->create();
 
@@ -211,5 +216,41 @@ class UserTest extends TestCase
         }
 
         $this->assertTrue($isCorrectRole, "Did not get correct role of: {$role}");
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_a_collection_of_users_with_specific_roles()
+    {
+        User::factory(15)->create();
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = User::factory()->create(['role' => User::ADMIN]);
+
+        $this->actingAs($user, 'sanctum');
+
+        $roles = [Arr::random(User::ROLES), Arr::random(User::ROLES)];
+
+        $url = route('v1.users.index') . '?' . http_build_query(['roles' => $roles]);
+
+        $response = $this->get($url, ['Accept' => 'application/json'])
+            ->assertOk()
+            ->assertJsonStructure(['data']);
+
+        $data = $response->json('data');
+
+        $isCorrectRole = true;
+
+        foreach ($data as $entry) {
+            if (!in_array($entry['role'], $roles)) {
+                $isCorrectRole = false;
+                break;
+            }
+        }
+
+        $this->assertTrue($isCorrectRole, "Did not get correct role of: " . implode(', ', $roles));
     }
 }

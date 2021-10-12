@@ -11,7 +11,7 @@ import Group from '../../../components/Forms/Group';
 import Input from '../../../components/Forms/Input';
 import Label from '../../../components/Forms/Label';
 import { OrderInterface, OrderStatuses } from '../../../interfaces/order.interface';
-import { formatNumber, fulltextSearch, handleError } from '../../../helpers';
+import { formatNumber, fulltextSearch, getHTMLBody, handleError } from '../../../helpers';
 import { createOrder, getOrder, updateOrder } from '../../../queries/order.queries';
 import Spinner from '../../../components/Spinner';
 import { useQuery } from 'react-query';
@@ -514,7 +514,12 @@ const Form: FC<Props> = (props) => {
 								alt={selectedProduct.name}
 								className='rounded-full h-52 w-52 shadow-lg mx-auto my-8'
 							/>
-							<div dangerouslySetInnerHTML={{ __html: selectedProduct.description || '' }} />
+							<div
+								className='container'
+								dangerouslySetInnerHTML={{
+									__html: selectedProduct.description ? getHTMLBody(selectedProduct.description) : '',
+								}}
+							/>
 						</Body>
 					</Dialog>
 				</Modal>

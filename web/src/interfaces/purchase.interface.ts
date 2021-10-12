@@ -9,6 +9,7 @@ export interface PurchaseInterface extends ModelInterface {
 	amount: number;
 	cost: number;
 	paid: number;
+	total: number;
 	product?: ProductInterface;
 	user?: UserInterface;
 }

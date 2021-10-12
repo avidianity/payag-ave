@@ -35,6 +35,7 @@ class UpdateUserRequest extends FormRequest
             ],
             'password' => ['nullable', 'string'],
             'phone' => ['nullable', 'regex:' . Regex::phMobileNumber()],
+            'status' => ['nullable', 'boolean'],
             'picture' => ['nullable', 'file', 'image'],
         ];
     }

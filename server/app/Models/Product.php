@@ -24,6 +24,10 @@ class Product extends Model
         'category_id'
     ];
 
+    protected $casts = [
+        'price' => 'float',
+    ];
+
     protected static function booted()
     {
         static::deleting(function (self $product) {

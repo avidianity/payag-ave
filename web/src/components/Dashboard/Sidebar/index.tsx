@@ -73,8 +73,11 @@ const Sidebar: FC<Props> = (props) => {
 					<Link title='Purchases' to={url(routes.PURCHASES)} icon='credit-card'>
 						<span className='sidebar-link-text'>Purchases</span>
 					</Link>
-					<Link title='People' to={url(routes.PEOPLE)} icon='user-friends'>
-						<span className='sidebar-link-text'>People</span>
+					<Link title='Staff' to={url(routes.STAFF)} icon='user-friends'>
+						<span className='sidebar-link-text'>Staff</span>
+					</Link>
+					<Link title='Customers' to={url(routes.CUSTOMERS)} icon='user-friends'>
+						<span className='sidebar-link-text'>Customers</span>
 					</Link>
 					<Link title='Sale' to={url(routes.SALE)} icon='chart-pie'>
 						<span className='sidebar-link-text'>Sale</span>

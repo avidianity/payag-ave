@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\Services\DOMServiceException;
 use DOMDocument;
 
 class DOMService
@@ -14,9 +15,11 @@ class DOMService
      */
     public function clean($html)
     {
-        $dom = new DOMDocument();
+        $dom = app(DOMDocument::class);
 
-        $dom->loadHTML($html);
+        if (!$dom->loadHTML($html)) {
+            throw new DOMServiceException('Unable to load HTML.');
+        }
 
         $scripts = $dom->getElementsByTagName('script');
 
@@ -54,7 +57,11 @@ class DOMService
             $element->parentNode->removeChild($element);
         }
 
-        return $dom->saveHTML();
+        if ($result = $dom->saveHTML()) {
+            return $result;
+        }
+
+        throw new DOMServiceException('Unable to save as HTML string.');
     }
 
     /**
@@ -66,7 +73,7 @@ class DOMService
      */
     public function hasTags($html, $tags)
     {
-        $dom = new DOMDocument();
+        $dom = app(DOMDocument::class);
 
         $dom->loadHTML($html);
 
@@ -91,7 +98,7 @@ class DOMService
      */
     public function hasTag($html, $tag)
     {
-        $dom = new DOMDocument();
+        $dom = app(DOMDocument::class);
 
         $dom->loadHTML($html);
 

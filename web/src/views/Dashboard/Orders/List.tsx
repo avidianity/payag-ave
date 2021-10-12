@@ -1,10 +1,9 @@
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import Button from '../../../components/Buttons/Button';
 import Table from 'react-data-table-component';
 import Tooltip from 'react-tooltip';
 import { useURL } from '@avidian/hooks';
 import { useRebuildTooltip } from '../../../hooks';
-import ImageModal from '@avidian/react-modal-image';
 import { useQuery } from 'react-query';
 import { deleteOrder, getOrders } from '../../../queries/order.queries';
 import dayjs from 'dayjs';
@@ -13,8 +12,7 @@ import RouterLinkButton from '../../../components/Buttons/RouterLinkButton';
 import View from '../../../components/Dashboard/View';
 import Head from '../../../components/Dashboard/View/Head';
 import Body from '../../../components/Card/Body';
-import { AuthContext } from '../../../contexts/auth.context';
-import { handleError, urlWithToken } from '../../../helpers';
+import { formatNumber, handleError } from '../../../helpers';
 import { OrderInterface } from '../../../interfaces/order.interface';
 import swal from 'sweetalert';
 import OrderStatusBadge from '../../../components/Badges/OrderStatusBadge';
@@ -25,7 +23,6 @@ const List: FC<Props> = (props) => {
 	const url = useURL();
 	useRebuildTooltip();
 	const { data, refetch, isFetching } = useQuery('orders', getOrders);
-	const { token } = useContext(AuthContext);
 
 	const remove = async (row: OrderInterface) => {
 		try {
@@ -89,7 +86,7 @@ const List: FC<Props> = (props) => {
 						},
 						{
 							name: 'Paid',
-							selector: (row) => row.paid,
+							selector: (row) => formatNumber(row.paid),
 							sortable: true,
 						},
 						{

@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { route } from '../helpers';
 import { UserInterface } from '../interfaces/user.interface';
+import { stringify } from 'query-string';
 
 export async function getUsers(params?: Record<string, any>) {
-	const urlSearchParams = new URLSearchParams(params);
-
 	const {
 		data: { data },
-	} = await axios.get<{ data: UserInterface[] }>(`${route('v1.users.index')}?${urlSearchParams.toString()}`);
+	} = await axios.get<{ data: UserInterface[] }>(
+		`${route('v1.users.index')}${params ? `?${stringify(params, { arrayFormat: 'bracket' })}` : ''}`
+	);
 	return data;
 }
 

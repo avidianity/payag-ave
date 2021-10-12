@@ -27,6 +27,8 @@ class GetUsersRequest extends FormRequest
     {
         return [
             'role' => ['nullable', 'string', Rule::in(User::ROLES)],
+            'roles' => ['nullable', 'array'],
+            'roles.*' => ['required', 'string', Rule::in(User::ROLES)],
         ];
     }
 }

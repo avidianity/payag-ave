@@ -12,4 +12,6 @@ export const routes = {
 	PROFILE: '/profile',
 	SETTINGS: '/settings',
 	LOGOUT: '/logout',
+	STAFF: '/staff',
+	CUSTOMERS: '/customers',
 };

@@ -3,22 +3,31 @@ import { useEffect, useState } from 'react';
 import Tooltip from 'react-tooltip';
 
 export function useRebuildTooltip() {
+	const [eventsAttached, setEventsAttached] = useState(false);
 	useEffect(() => {
 		Tooltip.rebuild();
+		const handle = setTimeout(() => Tooltip.rebuild(), 1000);
+		return () => {
+			clearTimeout(handle);
+		};
 	});
 
 	useEffect(() => {
-		setTimeout(() => {
-			const paginationButton = document.querySelector('.sc-ezredP.jexnEe');
-			if (paginationButton) {
-				const elements = Array.from(paginationButton.querySelectorAll('button'));
-				elements.forEach((element) => {
-					element.addEventListener('click', () => {
-						setTimeout(() => Tooltip.rebuild(), 250);
+		if (!eventsAttached) {
+			const handle = setInterval(() => {
+				const paginationButton = document.querySelector('.jexnEe');
+				if (paginationButton) {
+					const elements = Array.from(paginationButton.querySelectorAll('button'));
+					elements.forEach((element) => {
+						element.addEventListener('click', () => {
+							setTimeout(() => Tooltip.rebuild(), 50);
+						});
 					});
-				});
-			}
-		}, 500);
+					setEventsAttached(true);
+					clearInterval(handle);
+				}
+			}, 1000);
+		}
 	}, []);
 }
 

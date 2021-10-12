@@ -26,6 +26,10 @@ class Order extends Model
         'status',
     ];
 
+    protected $casts = [
+        'paid' => 'float',
+    ];
+
     protected static function booted()
     {
         static::deleting(function (self $order) {
